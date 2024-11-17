@@ -91,6 +91,8 @@ static inline void bsp_epwm_ch1_on()
 
     EPwm6Regs.AQCSFRC.bit.CSFA = 0;
     EPwm6Regs.AQCSFRC.bit.CSFB = 0;
+
+    bsp_POWER_EN_CH1(1);
 }
 
 static inline void bsp_epwm_ch1_off()
@@ -104,6 +106,8 @@ static inline void bsp_epwm_ch1_off()
 
     EPwm6Regs.AQCSFRC.bit.CSFA = TYJ_AQSFRC_LOW;
     EPwm6Regs.AQCSFRC.bit.CSFB = TYJ_AQSFRC_HIGH;
+
+    bsp_POWER_EN_CH1(0);
 }
 
 static inline void bsp_epwm_ch1_LSSC()

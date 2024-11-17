@@ -16,7 +16,7 @@
 
 #include "proj.h"
 
-static void scd_call_in_mainLoop()
+void scd_call_in_mainLoop()
 {
     volatile struct SCI_REGS* scd_SciRegs = &SciaRegs;
 

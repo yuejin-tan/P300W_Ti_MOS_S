@@ -10,8 +10,7 @@
 
 #include "main.h"
 
-void RDC_enAcc(void);
-
+void scd_call_in_mainLoop();
 
 #endif /* MCU_CODE_CPU1_BSP_RUNTIME_H_ */
 

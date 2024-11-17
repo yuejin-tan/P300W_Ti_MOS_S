@@ -18,6 +18,7 @@
 #include "isr.h"
 #include "scd_inc.h"
 #include "bootcpu2.h"
+#include "cdb_cpu1.h"
 
 #include "proj.h"
 
@@ -871,8 +872,15 @@ void bsp_start()
     // 启动 tim_1 cdb轮询任务滴答计时器
     CpuTimer1Regs.TCR.bit.TSS = 0;
 
-    // power en
-    bsp_POWER_EN_CH1(0);
+    // 在该控制板上，先要等强电上电，才能校准偏置
+    while (CH1_Udc < CH1_Udc_LThd)
+    {
+        // 保证调试功能正常
+        scd_call_in_mainLoop();
+        cdb_ack_cpu1();
+    }
+    // 等待10ms，保证drv8305完成初始化
+    DELAY_US(10000);
 
     // 初始化adc偏置
     adcOffset_init(4000);

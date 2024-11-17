@@ -161,6 +161,8 @@ float CH1_Idc = 0.0f;
 
 float Pdc = 0.0f;
 
+float CH1_Udc_LThd = 6.0f;
+
 // 转速环
 float omegaMfbk = 0.0f;
 
@@ -304,7 +306,7 @@ void ctrl_init()
     Goertz_init(&Goertz1, 1, OECA1.sweepMax);
     Goertz_init(&Goertz2, 2, OECA1.sweepMax);
 
-    encoder_init(&encoder1, 5000);
+    encoder_init(&encoder1, 1000);
 }
 
 static inline void angleModeTask()

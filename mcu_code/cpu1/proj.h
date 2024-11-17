@@ -89,6 +89,8 @@ extern float CH1_Idc;
 
 extern float Pdc;
 
+extern float CH1_Udc_LThd;
+
 // 转速环
 extern float omegaMfbk;
 
