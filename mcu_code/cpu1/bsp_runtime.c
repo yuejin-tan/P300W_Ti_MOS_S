@@ -47,6 +47,15 @@ void infLoopMain()
 
 #endif
 
+        if (bsp_tim1_polling_OF())
+        {
+            // tim 1 100ms间隔已到
+            // 清空标志位
+            bsp_tim1_clearFlg_OF();
+
+            bsp_LED_D9_RED_CTRL(2);
+        }
+
     }
 }
 

@@ -38,28 +38,19 @@ static inline void bsp_POWER_EN_CH1(int level)
 }
 
 // LED D9 RED
-static inline void bsp_LED_D9_RED_CTRL(int ifOn)
+static inline void bsp_LED_D9_RED_CTRL(int sta)
 {
-    if (ifOn)
+    if (sta == 1)
     {
         GpioDataRegs.GPBCLEAR.bit.GPIO34 = 1;
     }
-    else
+    else if (sta == 0)
     {
         GpioDataRegs.GPBSET.bit.GPIO34 = 1;
     }
-}
-
-// LED D10 BLUE
-static inline void bsp_LED_D10_BLUE_CTRL(int ifOn)
-{
-    if (ifOn)
-    {
-        GpioDataRegs.GPACLEAR.bit.GPIO31 = 1;
-    }
     else
     {
-        GpioDataRegs.GPASET.bit.GPIO31 = 1;
+        GpioDataRegs.GPBTOGGLE.bit.GPIO34 = 1;
     }
 }
 

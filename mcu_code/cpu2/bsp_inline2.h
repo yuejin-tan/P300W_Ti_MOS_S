@@ -11,7 +11,7 @@
 #include "F28x_Project.h"
 #include "stdint.h"
 
-// timer 0
+ // timer 0
 
 static inline int16_t bsp_tim0_polling_OF(void)
 {
@@ -35,5 +35,21 @@ static inline void bsp_tim1_clearFlg_OF(void)
     CpuTimer1Regs.TCR.bit.TIF = 1;
 }
 
+// LED D10 BLUE
+static inline void bsp_LED_D10_BLUE_CTRL(int sta)
+{
+    if (sta == 1)
+    {
+        GpioDataRegs.GPACLEAR.bit.GPIO31 = 1;
+    }
+    else if (sta == 0)
+    {
+        GpioDataRegs.GPASET.bit.GPIO31 = 1;
+    }
+    else
+    {
+        GpioDataRegs.GPATOGGLE.bit.GPIO31 = 1;
+    }
+}
 
 #endif /* SHARE_CPU2_BSP_INLINE2_H_ */

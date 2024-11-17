@@ -23,9 +23,10 @@ void  mainLoopProcess_cpu2()
 {
     if (bsp_tim0_polling_OF())
     {
-        // tim 0 1ms间隔已到
+        // tim 0 100ms间隔已到
         // 清空标志位
         bsp_tim0_clearFlg_OF();
 
+        bsp_LED_D10_BLUE_CTRL(2);
     }
 }

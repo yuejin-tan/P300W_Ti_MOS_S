@@ -468,10 +468,10 @@ void cpu2InitSysCtrl()
 #pragma CODE_SECTION(cpu2InitTimers, "ramfuncs2");
 void cpu2InitTimers()
 {
-    // tim_0 1ms 主循环低优先级任务，滴答计数
+    // tim_0 100ms 主循环低优先级任务，滴答计数
 
     // Initialize timer period, 200MHz * 1000us -> 1ms
-    CpuTimer0Regs.PRD.all = (200ul * 1000ul - 1);
+    CpuTimer0Regs.PRD.all = (200ul * 1000ul * 100ul - 1);
     // Initialize pre-scale counter to divide by 1 (SYSCLKOUT):
     CpuTimer0Regs.TPR.all = 0;
     CpuTimer0Regs.TPRH.all = 0;

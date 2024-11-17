@@ -688,9 +688,8 @@ static void init_board_gpio()
     bsp_LED_D9_RED_CTRL(0);
 
     // LED D10 BLUE
-    GPIO_SetupPinMux(31, GPIO_MUX_CPU1, 0);
+    GPIO_SetupPinMux(31, GPIO_MUX_CPU2, 0);
     GPIO_SetupPinOptions(31, GPIO_OUTPUT, GPIO_PUSHPULL);
-    bsp_LED_D10_BLUE_CTRL(0);
 
     return;
 }
@@ -711,10 +710,10 @@ static void init_cpu_timers()
     // Reload all counter register with period value:
     CpuTimer0Regs.TCR.bit.TRB = 1;
 
-    // tim_1 4ms cdb轮询任务，滴答计数
+    // tim_1 100ms cdb轮询任务，滴答计数
 
     // Initialize timer period, 200MHz * 4000us -> 4ms
-    CpuTimer1Regs.PRD.all = (200ul * 4000ul - 1);
+    CpuTimer1Regs.PRD.all = (200ul * 1000ul * 100ul - 1);
     // Initialize pre-scale counter to divide by 1 (SYSCLKOUT):
     CpuTimer1Regs.TPR.all = 0;
     CpuTimer1Regs.TPRH.all = 0;
