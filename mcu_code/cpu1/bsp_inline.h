@@ -14,7 +14,7 @@
  // HW Fault
 static inline int bsp_GPIO_ifHWFaultSigSet()
 {
-    if (GpioDataRegs.GPBDAT.bit.GPIO56)
+    if (GpioDataRegs.GPEDAT.bit.GPIO139)
     {
         return 0;
     }
@@ -117,6 +117,43 @@ static inline void bsp_epwm_ch1_LSSC()
 
     EPwm6Regs.AQCSFRC.bit.CSFA = TYJ_AQSFRC_LOW;
     EPwm6Regs.AQCSFRC.bit.CSFB = TYJ_AQSFRC_LOW;
+}
+
+// mode : 0@DOWN 1@UP; bit0 A, bit1 B, bit2 C
+static inline void bsp_epwm_ch1_LSSC2(int16_t mode)
+{
+    if (mode & 0x1)
+    {
+        EPwm4Regs.AQCSFRC.bit.CSFA = TYJ_AQSFRC_HIGH;
+        EPwm4Regs.AQCSFRC.bit.CSFB = TYJ_AQSFRC_HIGH;
+    }
+    else
+    {
+        EPwm4Regs.AQCSFRC.bit.CSFA = TYJ_AQSFRC_LOW;
+        EPwm4Regs.AQCSFRC.bit.CSFB = TYJ_AQSFRC_LOW;
+    }
+
+    if (mode & 0x2)
+    {
+        EPwm5Regs.AQCSFRC.bit.CSFA = TYJ_AQSFRC_HIGH;
+        EPwm5Regs.AQCSFRC.bit.CSFB = TYJ_AQSFRC_HIGH;
+    }
+    else
+    {
+        EPwm5Regs.AQCSFRC.bit.CSFA = TYJ_AQSFRC_LOW;
+        EPwm5Regs.AQCSFRC.bit.CSFB = TYJ_AQSFRC_LOW;
+    }
+
+    if (mode & 0x4)
+    {
+        EPwm6Regs.AQCSFRC.bit.CSFA = TYJ_AQSFRC_HIGH;
+        EPwm6Regs.AQCSFRC.bit.CSFB = TYJ_AQSFRC_HIGH;
+    }
+    else
+    {
+        EPwm6Regs.AQCSFRC.bit.CSFA = TYJ_AQSFRC_LOW;
+        EPwm6Regs.AQCSFRC.bit.CSFB = TYJ_AQSFRC_LOW;
+    }
 }
 
 // adc A

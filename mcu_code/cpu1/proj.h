@@ -115,6 +115,9 @@ extern float CH1_Idc_raw_offset;
 extern int16_t CH1_angle_mode;
 
 extern int16_t CH1_cur_mode;
+extern int16_t CH1_cur_mode2;
+
+extern uint16_t filtHWFaultCnt;
 
 extern int16_t CH1_ext_fcn;
 

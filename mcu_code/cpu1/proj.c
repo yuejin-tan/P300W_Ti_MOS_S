@@ -186,6 +186,9 @@ float CH1_Iw_raw_offset = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 int16_t CH1_angle_mode = 0;
 
 int16_t CH1_cur_mode = 0;
+int16_t CH1_cur_mode2 = 0;
+
+uint16_t filtHWFaultCnt = 0;
 
 // bit 0 1: udc var
 // bit 1 2: Udq comp with fbk val
@@ -405,18 +408,17 @@ static inline void protectIsrTask()
     }
 
     // 功率模块硬件故障保护
-    static uint16_t localFiltHWF = 0;
     if (bsp_GPIO_ifHWFaultSigSet())
     {
-        localFiltHWF++;
-        if (localFiltHWF > 3)
+        filtHWFaultCnt++;
+        if (filtHWFaultCnt > 3)
         {
-            IProtectFlg_CH1 |= 0x10u;
+            // IProtectFlg_CH1 |= 0x10u;
         }
     }
     else
     {
-        localFiltHWF = 0;
+        filtHWFaultCnt = 0;
     }
 
     // 任何时候进行转速绝对值保护
@@ -485,7 +487,7 @@ static inline void curLoopTask()
     switch (CH1_cur_mode)
     {
     case CM_LSSC:
-        bsp_epwm_ch1_LSSC();
+        bsp_epwm_ch1_LSSC2(CH1_cur_mode2);
         break;
 
     case CM_I_loop:
@@ -524,6 +526,7 @@ static inline void curLoopTask()
         if (CH1_ext_fcn & 0x4u)
         {
             // 死区补偿 part2
+#if MATLAB_PARA_ctrl_freq_mul == 2
             if (bsp_epwm_ch1_is_up_cnt())
             {
                 dbComp2_down(&CH1_svpwm, &CH1_Ifilt, db_Ithd_1, db_cmp_tick);
@@ -532,6 +535,9 @@ static inline void curLoopTask()
             {
                 dbComp2_up(&CH1_svpwm, &CH1_Ifilt, db_Ithd_1, db_cmp_tick);
             }
+#else
+            dbComp2_all(&CH1_svpwm, &CH1_Ifilt, db_Ithd_1, db_cmp_tick);
+#endif
         }
         bsp_epwm_ch1_reg_set(&CH1_svpwm);
         bsp_epwm_ch1_on();

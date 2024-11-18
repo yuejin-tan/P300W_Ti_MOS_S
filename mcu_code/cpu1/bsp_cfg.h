@@ -17,7 +17,7 @@
 #define PWM_DEADBAND_TICKS (MATLAB_PARA_tick_dead)
 
 // 母线电压
-#define UDC_INIT_VAL (27)
+#define UDC_INIT_VAL (24)
 
 // 保护参数设置
 // 电流保护

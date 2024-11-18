@@ -667,9 +667,9 @@ static void init_eqep2(int ifInvQaQb)
 
 static void init_board_gpio()
 {
-    // DRV8305 fault gpio56
-    GPIO_SetupPinMux(56, GPIO_MUX_CPU1, 0);
-    GPIO_SetupPinOptions(56, GPIO_INPUT, GPIO_PULLUP | GPIO_QUAL6);
+    // DRV8305 fault gpio139
+    GPIO_SetupPinMux(139, GPIO_MUX_CPU1, 0);
+    GPIO_SetupPinOptions(139, GPIO_INPUT, GPIO_PULLUP | GPIO_QUAL6);
 
     // DRV8305 WAKE gpio27
     // 不考虑低功耗
