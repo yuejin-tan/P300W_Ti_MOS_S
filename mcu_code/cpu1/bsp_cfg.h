@@ -53,6 +53,9 @@
 #define TEMP_PRCT_FOLW_DMAX (0)
 #define TEMP_PRCT_FOLW_INTG_MAX (0)
 
+// eqep
+#define ENCO_PPR (1000)
+
 // 采样时间设置
 // 150 sysclk = 750ns
 #define ADC_SAMP_TICKS (150)

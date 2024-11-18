@@ -13,6 +13,10 @@
 
 static inline void drv8305_init()
 {
+    // pin66 cs pin
+    GPIO_SetupPinMux(66, GPIO_MUX_CPU1, 0);
+    GPIO_SetupPinOptions(66, GPIO_OUTPUT, GPIO_PULLUP);
+    GPIO_WritePin(66, 1);
 
     // pin63 SPISIMOA pin
     GPIO_SetupPinMux(63, GPIO_MUX_CPU1, 15);
@@ -23,11 +27,6 @@ static inline void drv8305_init()
     // pin65 SPICLKA pin
     GPIO_SetupPinMux(65, GPIO_MUX_CPU1, 15);
     GPIO_SetupPinOptions(65, GPIO_OUTPUT, GPIO_PULLUP | GPIO_ASYNC);
-
-    // pin131 cs pin
-    GPIO_SetupPinMux(131, GPIO_MUX_CPU1, 0);
-    GPIO_SetupPinOptions(131, GPIO_OUTPUT, GPIO_PULLUP);
-    GPIO_WritePin(131, 1);
 
     // spi外设配置
     // 打开 SPI-B 时钟

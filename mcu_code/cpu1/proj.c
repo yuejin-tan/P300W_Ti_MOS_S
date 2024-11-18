@@ -306,7 +306,7 @@ void ctrl_init()
     Goertz_init(&Goertz1, 1, OECA1.sweepMax);
     Goertz_init(&Goertz2, 2, OECA1.sweepMax);
 
-    encoder_init(&encoder1, 1000);
+    encoder_init(&encoder1, ENCO_PPR);
 }
 
 static inline void angleModeTask()
@@ -772,16 +772,13 @@ static inline void outerLoopTask()
         switch (torque_mode)
         {
         case TM_id0:
-        {
-            float te_tab = targetTe * 2.0f + TE_IQ_ID0_2WAY_TAB_OFFSET;
-            targetIq_CH1 = lookUp_1d_lin_puX(te_tab, TE_IQ_ID0_2WAY_TAB, TE_IQ_ID0_2WAY_TAB_MAX);
+            targetIq_CH1 = targetTe * (1.0f / MATLAB_PARA_faif / MATLAB_PARA_p0 / 1.5f);
             break;
-        }
 
         default:
         case TM_MTPA:
         {
-            float te_tab = targetTe * 2.0f + TE_IDQ_MTPA_2WAY_TAB_OFFSET;
+            float te_tab = targetTe * 1.0f + TE_IDQ_MTPA_2WAY_TAB_OFFSET;
             targetIq_CH1 = lookUp_1d_lin_puX(te_tab, TE_IQ_MTPA_2WAY_TAB, TE_IDQ_MTPA_2WAY_TAB_MAX);
             targetId_CH1 = lookUp_1d_lin_puX(te_tab, TE_ID_MTPA_2WAY_TAB, TE_IDQ_MTPA_2WAY_TAB_MAX);
             thetaCal_setTheta(&thetaMTPA, targetThetaMTPA);

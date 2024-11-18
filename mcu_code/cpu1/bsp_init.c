@@ -642,7 +642,7 @@ static void init_eqep2(int ifInvQaQb)
     // Set the emulation mode of the eQEP module.
     EQEP_setEmulationMode(EQEP_TYJDEV_BASE, EQEP_EMULATIONMODE_RUNFREE);
     // Configures eQEP module position counter unit.
-    EQEP_setPositionCounterConfig(EQEP_TYJDEV_BASE, EQEP_POSITION_RESET_IDX, 3999U);
+    EQEP_setPositionCounterConfig(EQEP_TYJDEV_BASE, EQEP_POSITION_RESET_IDX, ENCO_PPR * 4 - 1);
     // Sets the current encoder position.
     EQEP_setPosition(EQEP_TYJDEV_BASE, 0U);
     // Disables the eQEP module unit timer.
@@ -749,7 +749,7 @@ void bsp_init_chip_devs()
     init_adc_c();
     init_adc_d();
     init_cpu_timers();
-    init_eqep2(0);
+    init_eqep2(1);
 
     return;
 }
@@ -848,18 +848,12 @@ void bsp_start()
     // 初始化
     scd_init_1();
 
-    volatile struct SCI_REGS* scd_SciRegs = &ScibRegs;
-    // 辅助上位机同步
-    for (int ii = 0;ii < 16;)
-    {
-        if ((*scd_SciRegs).SCIFFTX.bit.TXFFST < 15)
-        {
-            (*scd_SciRegs).SCITXBUF.all = scd_send1Byte(&scd_1);
-            ii++;
-        }
-    }
-
 #endif
+
+    // 起动DRV8305
+    bsp_POWER_EN_CH1(1);
+    // 等待10ms，保证drv8305完成初始化
+    DELAY_US(10000);
 
     // 启动pwm波
     EALLOW;
@@ -875,9 +869,12 @@ void bsp_start()
     // 在该控制板上，先要等强电上电，才能校准偏置
     while (CH1_Udc < CH1_Udc_LThd)
     {
+#ifdef _SCD_ENABLE
         // 保证调试功能正常
         scd_call_in_mainLoop();
         cdb_ack_cpu1();
+#endif
+
     }
     // 等待10ms，保证drv8305完成初始化
     DELAY_US(10000);
