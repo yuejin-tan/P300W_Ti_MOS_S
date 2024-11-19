@@ -408,22 +408,29 @@ static void init_epwm_CH1()
     // 100MHz 分频
     ClkCfgRegs.PERCLKDIVSEL.bit.EPWMCLKDIV = 1;
     CpuSysRegs.PCLKCR2.bit.EPWM1 = 1;
-    CpuSysRegs.PCLKCR2.bit.EPWM2 = 1;
 
     CpuSysRegs.PCLKCR2.bit.EPWM4 = 1;
     CpuSysRegs.PCLKCR2.bit.EPWM5 = 1;
     CpuSysRegs.PCLKCR2.bit.EPWM6 = 1;
+
+    CpuSysRegs.PCLKCR2.bit.EPWM7 = 1;
+    CpuSysRegs.PCLKCR2.bit.EPWM8 = 1;
     EDIS;
 
-    // epwm1 用于计算CPU1的中断时间
+    // epwm1 BASE
     cfg_epwm_1pha(&EPwm1Regs, 0);
-    // epwm2 用于触发CPU1的CLA1, 及CLA1的软件计时
-    cfg_epwm_1pha(&EPwm2Regs, 1);
 
     cfg_epwm_1pha(&EPwm4Regs, 1);
     cfg_epwm_1pha(&EPwm5Regs, 1);
     cfg_epwm_1pha(&EPwm6Regs, 1);
 
+    // epwm7 用于计算CPU1的中断时间
+    cfg_epwm_1pha(&EPwm7Regs, 1);
+    // epwm8 输出PWM情况
+    cfg_epwm_1pha(&EPwm8Regs, 1);
+    EPwm8Regs.CMPA.bit.CMPA = PWM_DEADBAND_TICKS;
+    EPwm8Regs.AQCSFRC.bit.CSFA = 0;
+    EPwm8Regs.AQCSFRC.bit.CSFB = 0;
 
     // 配置EPWM的CH1的触发事件
 #if 1
@@ -458,6 +465,8 @@ static void init_epwm_CH1()
     GpioCtrlRegs.GPAPUD.bit.GPIO10 = 1;
     GpioCtrlRegs.GPAPUD.bit.GPIO11 = 1;
 
+    GpioCtrlRegs.GPAPUD.bit.GPIO15 = 1;
+
     // Configure GPIOx
     GpioCtrlRegs.GPAMUX1.bit.GPIO6 = 1;
     GpioCtrlRegs.GPAMUX1.bit.GPIO7 = 1;
@@ -465,6 +474,8 @@ static void init_epwm_CH1()
     GpioCtrlRegs.GPAMUX1.bit.GPIO9 = 1;
     GpioCtrlRegs.GPAMUX1.bit.GPIO10 = 1;
     GpioCtrlRegs.GPAMUX1.bit.GPIO11 = 1;
+
+    GpioCtrlRegs.GPAMUX1.bit.GPIO15 = 1;
     EDIS;
 
     return;
@@ -756,7 +767,7 @@ void bsp_init_chip_devs()
 
 void bsp_init_board_devs()
 {
-    drv8305_init();
+    drv8305_init(&drv8305_1);
 
     return;
 }
@@ -850,11 +861,6 @@ void bsp_start()
 
 #endif
 
-    // 起动DRV8305
-    bsp_POWER_EN_CH1(1);
-    // 等待10ms，保证drv8305完成初始化
-    DELAY_US(10000);
-
     // 启动pwm波
     EALLOW;
     CpuSysRegs.PCLKCR0.bit.TBCLKSYNC = 1;
@@ -878,6 +884,10 @@ void bsp_start()
     }
     // 等待10ms，保证drv8305完成初始化
     DELAY_US(10000);
+    // 起动DRV8305
+    bsp_POWER_EN_CH1(1);
+    // 再等待1ms
+    DELAY_US(1000);
 
     // 初始化adc偏置
     adcOffset_init(4000);

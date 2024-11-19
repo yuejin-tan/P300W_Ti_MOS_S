@@ -20,7 +20,7 @@ uint16_t isr_end_pwm_cnt = 0;
 interrupt void adca1_isr(void)
 {
     // 查看执行时间 用epwm4
-    volatile struct EPWM_REGS* EPwmxRegs = &EPwm4Regs;
+    volatile struct EPWM_REGS* EPwmxRegs = &EPwm7Regs;
     isr_start_pwm_cnt = EPwmxRegs->TBCTR;
     if (EPwmxRegs->TBSTS.bit.CTRDIR == 0u)
     {

@@ -154,7 +154,7 @@ extern int16_t tempProtectFlg;
 extern uint16_t isr_start_pwm_cnt;
 extern uint16_t isr_end_pwm_cnt;
 
-// 旋变fault信号读取
-extern uint16_t ad2s1210ErrGPIO;
+extern struct encoder_struct encoder1;
+extern struct DRV8305_struct drv8305_1;
 
 #endif /* INCX_PROJ_H_ */

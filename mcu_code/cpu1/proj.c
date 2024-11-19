@@ -28,6 +28,7 @@
 #include "encoder.h"
 #include "proj2.h"
 
+#include "drv8305.h"
 
 struct SVPWM_struct CH1_svpwm;
 
@@ -79,7 +80,8 @@ struct Goertz_struct Goertz2;
 struct OECA_struct OECA1;
 struct LPF_Ord1_2_struct OECA_f1;
 
-encoder_struct encoder1;
+struct encoder_struct encoder1;
+struct DRV8305_struct drv8305_1;
 
 enum ANGLE_MODE
 {
@@ -413,7 +415,9 @@ static inline void protectIsrTask()
         filtHWFaultCnt++;
         if (filtHWFaultCnt > 3)
         {
-            // IProtectFlg_CH1 |= 0x10u;
+            IProtectFlg_CH1 |= 0x10u;
+            // 触发读取错误位
+            drv8305_1.ii = 0;
         }
     }
     else
@@ -833,6 +837,7 @@ void mainLoopProcess()
         // 清空标志位
         bsp_tim0_clearFlg_OF();
 
+        drv8305_idleErrCheck(&drv8305_1);
     }
 
     return;
