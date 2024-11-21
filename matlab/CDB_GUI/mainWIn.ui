@@ -28,576 +28,482 @@
        <attribute name="title">
         <string>paraSet</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>Group1</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="QLineEdit" name="lineEdit">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditV">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>value</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QVBoxLayout" name="verticalLayout_9" stretch="1,1,1">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="title">
+             <string>1</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
              <item>
-              <widget class="QPushButton" name="pushButtonR">
+              <widget class="QLineEdit" name="lineEdit">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text">
-                <string>R</string>
+               <property name="placeholderText">
+                <string>name</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButtonW">
+              <widget class="QLineEdit" name="lineEditV">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text">
-                <string>W</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Group2</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QLineEdit" name="lineEdit_2">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditV_2">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>value</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QPushButton" name="pushButtonR_2">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>R</string>
+               <property name="placeholderText">
+                <string>value</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButtonW_2">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>W</string>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <item>
+                <widget class="QPushButton" name="pushButtonR">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>R</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButtonW">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>W</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QGroupBox" name="groupBox_3">
-          <property name="title">
-           <string>Group3</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QLineEdit" name="lineEdit_3">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditV_3">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>value</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_2">
+            <property name="title">
+             <string>2</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
              <item>
-              <widget class="QPushButton" name="pushButtonR_3">
+              <widget class="QLineEdit" name="lineEdit_2">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text">
-                <string>R</string>
+               <property name="placeholderText">
+                <string>name</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButtonW_3">
+              <widget class="QLineEdit" name="lineEditV_2">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text">
-                <string>W</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QGroupBox" name="groupBox_4">
-          <property name="title">
-           <string>Group4</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
-           <item>
-            <widget class="QLineEdit" name="lineEdit_4">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditV_4">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>value</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
-             <item>
-              <widget class="QPushButton" name="pushButtonR_4">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>R</string>
+               <property name="placeholderText">
+                <string>value</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButtonW_4">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>W</string>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <item>
+                <widget class="QPushButton" name="pushButtonR_2">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>R</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButtonW_2">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>W</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QGroupBox" name="groupBox_5">
-          <property name="title">
-           <string>Group5</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_6">
-           <item>
-            <widget class="QLineEdit" name="lineEdit_5">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditV_5">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>value</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_3">
+            <property name="title">
+             <string>3</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
-              <widget class="QPushButton" name="pushButtonR_5">
+              <widget class="QLineEdit" name="lineEdit_3">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text">
-                <string>R</string>
+               <property name="placeholderText">
+                <string>name</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButtonW_5">
+              <widget class="QLineEdit" name="lineEditV_3">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="text">
-                <string>W</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QGroupBox" name="groupBox_6">
-          <property name="title">
-           <string>Group6</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_7">
-           <item>
-            <widget class="QLineEdit" name="lineEdit_6">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditV_6">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>value</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
-             <item>
-              <widget class="QPushButton" name="pushButtonR_6">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>R</string>
+               <property name="placeholderText">
+                <string>value</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButtonW_6">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>W</string>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <widget class="QPushButton" name="pushButtonR_3">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>R</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButtonW_3">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>W</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
-           </item>
-          </layout>
-         </widget>
+           </widget>
+          </item>
+         </layout>
         </item>
-        <item row="2" column="0">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QGroupBox" name="groupBox_4">
+            <property name="title">
+             <string>4</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <widget class="QLineEdit" name="lineEdit_4">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="placeholderText">
+                <string>name</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditV_4">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="placeholderText">
+                <string>value</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <item>
+                <widget class="QPushButton" name="pushButtonR_4">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>R</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButtonW_4">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>W</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_5">
+            <property name="title">
+             <string>5</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <widget class="QLineEdit" name="lineEdit_5">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="placeholderText">
+                <string>name</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditV_5">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="placeholderText">
+                <string>value</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <item>
+                <widget class="QPushButton" name="pushButtonR_5">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>R</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButtonW_5">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>W</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_6">
+            <property name="title">
+             <string>6</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <item>
+              <widget class="QLineEdit" name="lineEdit_6">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="placeholderText">
+                <string>name</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditV_6">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="placeholderText">
+                <string>value</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="QPushButton" name="pushButtonR_6">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>R</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButtonW_6">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>W</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
          <widget class="QGroupBox" name="groupBox_7">
           <property name="title">
-           <string>Group7</string>
+           <string>advanced</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">
            <item>
-            <widget class="QLineEdit" name="lineEdit_7">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditV_7">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>value</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
-             <item>
-              <widget class="QPushButton" name="pushButtonR_7">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>R</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButtonW_7">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>W</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QGroupBox" name="groupBox_8">
-          <property name="title">
-           <string>Group8</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_9">
-           <item>
-            <widget class="QLineEdit" name="lineEdit_8">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditV_8">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>value</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
-             <item>
-              <widget class="QPushButton" name="pushButtonR_8">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>R</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButtonW_8">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>W</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QGroupBox" name="groupBox_9">
-          <property name="title">
-           <string>Group9</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_10">
-           <item>
-            <widget class="QLineEdit" name="lineEdit_9">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditV_9">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>value</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_9">
              <item>
-              <widget class="QPushButton" name="pushButtonR_9">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
+              <widget class="QLabel" name="label_15">
                <property name="text">
-                <string>R</string>
+                <string>target</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButtonW_9">
+              <widget class="QComboBox" name="comboBox_src">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <item>
+                <property name="text">
+                 <string>src_1</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>src_2</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>src_3</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>src_4</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>src_5</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>src_6</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_13">
+               <property name="text">
+                <string>base val</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_baseVal">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="placeholderText">
+                <string>support Python expressions</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBox_preRead">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -605,7 +511,171 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>W</string>
+                <string>pre-read</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBox_postOverwrite">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>post-overwrite</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_24">
+             <item>
+              <widget class="QLabel" name="label_17">
+               <property name="text">
+                <string>mode</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBox_advMode">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <item>
+                <property name="text">
+                 <string>0_linear_add</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>1_log_multiply</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>2_LUT_assign</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_tarVal">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="placeholderText">
+                <string>support Python expressions</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_25">
+             <item>
+              <widget class="QLabel" name="label_16">
+               <property name="text">
+                <string>run steps</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBox_runStep">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>999999</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_14">
+               <property name="text">
+                <string>step dur(ms)</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBox_durTime">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximum">
+                <number>999999</number>
+               </property>
+               <property name="value">
+                <number>20</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_12">
+               <property name="text">
+                <string>idx start</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBox_idx">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximum">
+                <number>999</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_preRun">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>previous</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_normRun">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>next</string>
                </property>
               </widget>
              </item>
@@ -863,7 +933,7 @@
              <widget class="QLabel" name="label_2">
               <property name="text">
                <string>BuffSize
-(须与DSP一致)</string>
+(based on DSP)</string>
               </property>
              </widget>
             </item>
@@ -879,7 +949,7 @@
                <string/>
               </property>
               <property name="placeholderText">
-               <string>支持python表达式</string>
+               <string>support Python expressions</string>
               </property>
              </widget>
             </item>
@@ -941,7 +1011,7 @@
                <string/>
               </property>
               <property name="placeholderText">
-               <string>支持python表达式</string>
+               <string>support Python expressions</string>
               </property>
              </widget>
             </item>
@@ -1278,7 +1348,7 @@
              <string/>
             </property>
             <property name="placeholderText">
-             <string>支持python表达式</string>
+             <string>support Python expressions</string>
             </property>
            </widget>
           </item>
@@ -1305,7 +1375,7 @@
              <string/>
             </property>
             <property name="placeholderText">
-             <string>支持python表达式</string>
+             <string>support Python expressions</string>
             </property>
            </widget>
           </item>
@@ -1332,7 +1402,7 @@
              <string/>
             </property>
             <property name="placeholderText">
-             <string>支持python表达式</string>
+             <string>support Python expressions</string>
             </property>
            </widget>
           </item>
@@ -1343,7 +1413,7 @@
           <item>
            <widget class="QLabel" name="label_11">
             <property name="text">
-             <string>fig title</string>
+             <string>name (fig and export)</string>
             </property>
            </widget>
           </item>
@@ -1356,7 +1426,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>fig</string>
+             <string/>
             </property>
             <property name="placeholderText">
              <string>string</string>
@@ -1393,19 +1463,6 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="pushButton_setAll">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>set all</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="1">
            <widget class="QPushButton" name="pushButton_clearAll">
             <property name="sizePolicy">
@@ -1432,6 +1489,19 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="pushButton_setAll">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>set all</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="1">
            <widget class="QPushButton" name="pushButton_dump">
             <property name="sizePolicy">
@@ -1442,6 +1512,19 @@
             </property>
             <property name="text">
              <string>dump</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="pushButton_2workspace">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>to workspace</string>
             </property>
            </widget>
           </item>

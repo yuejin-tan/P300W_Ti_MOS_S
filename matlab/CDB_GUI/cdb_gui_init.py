@@ -1,3 +1,10 @@
+import mainWin_ui
+from cdb_dstruct_init import *
+import matplotlib.pyplot as plt
+import matplotlib
+import numpy as np
+from PyQt5 import QtCore, QtGui, QtWidgets
+from canlib import canlib, Frame
 import sys
 import os
 import functools
@@ -22,20 +29,13 @@ else:
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
 
-from canlib import canlib, Frame
-from PyQt5 import QtCore, QtGui, QtWidgets
-import numpy as np
-import matplotlib
 matplotlib.use("Qt5Agg")
-import matplotlib.pyplot as plt
 
 # 初始化库
-from cdb_dstruct_init import *
 
 # 初始化界面
-import mainWin_ui
 
-VERSION_STR = "CDB_GUI V0.2"
+VERSION_STR = "CDB_GUI V0.3"
 
 
 class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
@@ -68,12 +68,6 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
                                self.pushButtonR_5, self.pushButtonW_5)
         self.__paraTabInitUtil(self.lineEdit_6, self.lineEditV_6,
                                self.pushButtonR_6, self.pushButtonW_6)
-        self.__paraTabInitUtil(self.lineEdit_7, self.lineEditV_7,
-                               self.pushButtonR_7, self.pushButtonW_7)
-        self.__paraTabInitUtil(self.lineEdit_8, self.lineEditV_8,
-                               self.pushButtonR_8, self.pushButtonW_8)
-        self.__paraTabInitUtil(self.lineEdit_9, self.lineEditV_9,
-                               self.pushButtonR_9, self.pushButtonW_9)
 
         self.lineEdit.setText(paraSetPreDefName[0])
         self.lineEdit_2.setText(paraSetPreDefName[1])
@@ -81,9 +75,12 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
         self.lineEdit_4.setText(paraSetPreDefName[3])
         self.lineEdit_5.setText(paraSetPreDefName[4])
         self.lineEdit_6.setText(paraSetPreDefName[5])
-        self.lineEdit_7.setText(paraSetPreDefName[6])
-        self.lineEdit_8.setText(paraSetPreDefName[7])
-        self.lineEdit_9.setText(paraSetPreDefName[8])
+
+        # 高级参数设定
+        self.pushButton_preRun.clicked.connect(functools.partial(
+            self.advParaSetSlotUtil, -1))
+        self.pushButton_normRun.clicked.connect(functools.partial(
+            self.advParaSetSlotUtil, 1))
 
         # trig 界面部分
         self.lineEdit_S.setText(trigSrcPreDefName[0])
@@ -157,6 +154,7 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
         self.pushButton_setAll.clicked.connect(self.setAllSlot)
         self.pushButton_clearAll.clicked.connect(self.clrAllSlot)
         self.pushButton_draw.clicked.connect(self.drawSlot)
+        self.pushButton_2workspace.clicked.connect(self.toWorkspaceSlot)
 
         self.lineEdit_sAddr.setText(startAddr_init)
         self.lineEdit_dSize.setText(dumpSize_init)
@@ -253,19 +251,13 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
                         "decoding {} type err!".format(logTarNameList[ii]), 1000)
                     break
         except Exception:
-                print(datetime.datetime.now().strftime(
-                    '[%H:%M:%S.%f]')+" decoding err2!", file=sys.stderr)
-                self.statusBar().showMessage(
-                    "decoding err2!", 1000)
+            print(datetime.datetime.now().strftime(
+                '[%H:%M:%S.%f]')+" decoding err2!", file=sys.stderr)
+            self.statusBar().showMessage(
+                "decoding err2!", 1000)
 
-
-    def toCbSlot(self):
-        global cbStr
-        global totalCycle
-        global valYnpTab
-        global logTarCnt
-        global timex
-
+    def updateIsrFreqUtil(self):
+        global IsrFreq
         try:
             loc = {"val": 0}
             exec("val = "+self.lineEdit_isrFreq.text(), None, loc)
@@ -276,6 +268,14 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
             self.statusBar().showMessage("IsrFreq err!", 1000)
             return
 
+    def toCbSlot(self):
+        global cbStr
+        global totalCycle
+        global valYnpTab
+        global logTarCnt
+        global IsrFreq
+
+        updateIsrFreqUtil()
         timex = np.arange(totalCycle)/IsrFreq
 
         cbStr = ""
@@ -300,24 +300,29 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
         for ii in range(16):
             self.drawCheckBoxList[ii].setChecked(False)
 
+    def toWorkspaceSlot(self):
+        global gExportDict
+        exportName = self.lineEdit_figTitle.text()
+        if (exportName == ""):
+            exportName = datetime.datetime.now().strftime(
+                '[%Y-%m-%d, %H:%M:%S]')
+        # 浅复制即可
+        gExportDict[exportName] = valYnpTab.copy()
+        print(datetime.datetime.now().strftime(
+            '[%H:%M:%S.%f]')+f" export\"{exportName}\" fin!", file=sys.stderr)
+        self.statusBar().showMessage(f"export\"{exportName}\" fin!", 1000)
+
     def drawSlot(self):
         global totalCycle
         global valYnpTab
         global logTarCnt
-        global timex
+        global IsrFreq
 
-        try:
-            loc = {"val": 0}
-            exec("val = "+self.lineEdit_isrFreq.text(), None, loc)
-            IsrFreq = loc['val']
-        except Exception:
-            print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" IsrFreq err!", file=sys.stderr)
-            self.statusBar().showMessage("IsrFreq err!", 1000)
-            return
+        updateIsrFreqUtil()
         timex = np.arange(totalCycle)/IsrFreq
         # 画图分析
-        plt.figure(num=self.lineEdit_figTitle.text() + datetime.datetime.now().strftime(' @ [%Y-%m-%d, %H:%M:%S]'))
+        plt.figure(num=self.lineEdit_figTitle.text() +
+                   datetime.datetime.now().strftime(' @ [%Y-%m-%d, %H:%M:%S]'))
 
         for ii in range(logTarCnt):
             if (self.drawCheckBoxList[ii].checkState()):
@@ -341,7 +346,7 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
 
         try:
             trigSrcAddrList = [varDict[trigSrcNameX] if trigSrcNameX != "" else 0
-                               for trigSrcNameX in trigSrcNameList ]
+                               for trigSrcNameX in trigSrcNameList]
         except Exception:
             print(datetime.datetime.now().strftime(
                 '[%H:%M:%S.%f]')+" trigSrc name err!", file=sys.stderr)
@@ -491,7 +496,7 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
         try:
             val = 0
             loc = {"val": 0}
-            exec("val = "+valEdit.text()+"\n", None, loc)
+            exec("val = "+self.valEdit.text()+"\n", None, loc)
             val = loc['val']
 
         except Exception:
@@ -550,8 +555,80 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
                     self.tabWidget.setCurrentIndex(2)
                     return
 
+    def advParaSetSlotUtil(self, stepCoeff):
+        self.pushButton_preRun.setEnabled(False)
+        self.pushButton_normRun.setEnabled(False)
+        QtWidgets.QApplication.processEvents()
+
+        match (self.comboBox_src.currentIndex()):
+            case 0:
+                name = self.lineEdit.text()
+            case 1:
+                name = self.lineEdit_2.text()
+            case 2:
+                name = self.lineEdit_3.text()
+            case 3:
+                name = self.lineEdit_4.text()
+            case 4:
+                name = self.lineEdit_5.text()
+            case 5:
+                name = self.lineEdit_6.text()
+
+        if(self.checkBox_preRead.checkState()):
+            baseVal = readMCUVarUtil(name)
+        else:
+            try:
+                loc = {"val": 0}
+                exec("val = "+self.lineEdit_baseVal.text()+"\n", None, loc)
+                baseVal = loc['val']
+            except Exception:
+                print(datetime.datetime.now().strftime(
+                    '[%H:%M:%S.%f]')+" base val err!", file=sys.stderr)
+                self.statusBar().showMessage("base val err!", 1000)
+                self.pushButton_preRun.setEnabled(True)
+                self.pushButton_normRun.setEnabled(True)
+                return
+
+        mode = self.comboBox_advMode.currentIndex()
+
+        try:
+            loc = {"val": 0}
+            exec("val = ["+self.lineEdit_tarVal.text()+"]\n", None, loc)
+            srcList = loc['val']
+        except Exception:
+            print(datetime.datetime.now().strftime(
+                '[%H:%M:%S.%f]')+" src val err!", file=sys.stderr)
+            self.statusBar().showMessage("src val err!", 1000)
+            self.pushButton_preRun.setEnabled(True)
+            self.pushButton_normRun.setEnabled(True)
+            return
+
+        if(len(srcList) < 1):
+            print(datetime.datetime.now().strftime(
+                '[%H:%M:%S.%f]')+" src val err!", file=sys.stderr)
+            self.statusBar().showMessage("src val err!", 1000)
+            self.pushButton_preRun.setEnabled(True)
+            self.pushButton_normRun.setEnabled(True)
+            return
+
+        runStep = self.spinBox_runStep.value() * stepCoeff
+        tickDurMs = self.spinBox_durTime.value()
+        idx = self.spinBox_idx.value()
+        self.spinBox_idx.setValue((idx+runStep) % len(srcList))
+
+        retVal = advancedParaSet(
+            name, baseVal, mode, srcList, runStep, tickDurMs, idx)
+
+        if(self.checkBox_postOverwrite.checkState()):
+            self.lineEdit_baseVal.setText(str(retVal))
+
+        self.pushButton_preRun.setEnabled(True)
+        self.pushButton_normRun.setEnabled(True)
+        return
+
 
 # 读取变量的辅助函数
+
 
 def readMCUVarUtil(namex):
     global ch
@@ -569,7 +646,7 @@ def readMCUVarUtil(namex):
 
                 try:
                     match varTypeDict[namex]:
-                        case "uint16_t" :
+                        case "uint16_t":
                             txFrameData = struct.pack(
                                 "<I", varDict[namex]) + struct.pack("<I", 0)
                             txFrame = Frame(id_=6, data=txFrameData, dlc=8)
@@ -581,9 +658,10 @@ def readMCUVarUtil(namex):
                                 print(datetime.datetime.now().strftime(
                                     '[%H:%M:%S.%f]')+" frame err!")
                             else:
-                                can_val = struct.unpack("<H", frame.data[4:6])[0]
+                                can_val = struct.unpack(
+                                    "<H", frame.data[4:6])[0]
 
-                        case "int16_t" :
+                        case "int16_t":
                             txFrameData = struct.pack(
                                 "<I", varDict[namex]) + struct.pack("<I", 0)
                             txFrame = Frame(id_=6, data=txFrameData, dlc=8)
@@ -595,9 +673,10 @@ def readMCUVarUtil(namex):
                                 print(datetime.datetime.now().strftime(
                                     '[%H:%M:%S.%f]')+" frame err!")
                             else:
-                                can_val = struct.unpack("<h", frame.data[4:6])[0]
+                                can_val = struct.unpack(
+                                    "<h", frame.data[4:6])[0]
 
-                        case "uint32_t" :
+                        case "uint32_t":
                             txFrameData = struct.pack(
                                 "<I", varDict[namex]) + struct.pack("<I", 2)
                             txFrame = Frame(id_=6, data=txFrameData, dlc=8)
@@ -609,9 +688,10 @@ def readMCUVarUtil(namex):
                                 print(datetime.datetime.now().strftime(
                                     '[%H:%M:%S.%f]')+" frame err!")
                             else:
-                                can_val = struct.unpack("<I", frame.data[4:8])[0]
+                                can_val = struct.unpack(
+                                    "<I", frame.data[4:8])[0]
 
-                        case "int32_t" :
+                        case "int32_t":
                             txFrameData = struct.pack(
                                 "<I", varDict[namex]) + struct.pack("<I", 2)
                             txFrame = Frame(id_=6, data=txFrameData, dlc=8)
@@ -623,9 +703,10 @@ def readMCUVarUtil(namex):
                                 print(datetime.datetime.now().strftime(
                                     '[%H:%M:%S.%f]')+" frame err!")
                             else:
-                                can_val = struct.unpack("<i", frame.data[4:8])[0]
+                                can_val = struct.unpack(
+                                    "<i", frame.data[4:8])[0]
 
-                        case "float" :
+                        case "float":
                             txFrameData = struct.pack(
                                 "<I", varDict[namex]) + struct.pack("<I", 2)
                             txFrame = Frame(id_=6, data=txFrameData, dlc=8)
@@ -637,7 +718,8 @@ def readMCUVarUtil(namex):
                                 print(datetime.datetime.now().strftime(
                                     '[%H:%M:%S.%f]')+" frame err!")
                             else:
-                                can_val = struct.unpack("<f", frame.data[4:8])[0]
+                                can_val = struct.unpack(
+                                    "<f", frame.data[4:8])[0]
 
                 except Exception:
                     print(datetime.datetime.now().strftime(
@@ -647,7 +729,7 @@ def readMCUVarUtil(namex):
                     try:
                         ch.busOff()
                         ch.close()
-                    except :
+                    except:
                         print("ch close err...\n")
 
                 return can_val
@@ -678,7 +760,8 @@ def setMCUVarUtil(namex, val):
 
                 try:
                     match varTypeDict[namex]:
-                        case "uint16_t" :
+                        case "uint16_t":
+                            val = int(val)
                             txFrameData = struct.pack(
                                 "<I", varDict[namex]) + struct.pack("<H", val) + struct.pack("<H", 0)
                             txFrame = Frame(id_=3, data=txFrameData, dlc=8)
@@ -690,13 +773,15 @@ def setMCUVarUtil(namex, val):
                                 print(datetime.datetime.now().strftime(
                                     '[%H:%M:%S.%f]')+" frame err!")
                             else:
-                                can_val = struct.unpack("<H", frame.data[4:6])[0]
+                                can_val = struct.unpack(
+                                    "<H", frame.data[4:6])[0]
                                 if (abs(val-can_val)/(abs(val)+1e-12) > 0.01):
                                     print(datetime.datetime.now().strftime(
                                         '[%H:%M:%S.%f]')+" CAN err!")
                                     comSta = False
 
-                        case "int16_t" :
+                        case "int16_t":
+                            val = int(val)
                             txFrameData = struct.pack(
                                 "<I", varDict[namex]) + struct.pack("<h", val) + struct.pack("<H", 0)
                             txFrame = Frame(id_=3, data=txFrameData, dlc=8)
@@ -708,13 +793,15 @@ def setMCUVarUtil(namex, val):
                                 print(datetime.datetime.now().strftime(
                                     '[%H:%M:%S.%f]')+" frame err!")
                             else:
-                                can_val = struct.unpack("<h", frame.data[4:6])[0]
+                                can_val = struct.unpack(
+                                    "<h", frame.data[4:6])[0]
                                 if (abs(val-can_val)/(abs(val)+1e-12) > 0.01):
                                     print(datetime.datetime.now().strftime(
                                         '[%H:%M:%S.%f]')+" CAN err!")
                                     comSta = False
 
-                        case "uint32_t" :
+                        case "uint32_t":
+                            val = int(val)
                             txFrameData = struct.pack(
                                 "<I", varDict[namex]) + struct.pack("<I", val)
                             txFrame = Frame(id_=4, data=txFrameData, dlc=8)
@@ -726,13 +813,15 @@ def setMCUVarUtil(namex, val):
                                 print(datetime.datetime.now().strftime(
                                     '[%H:%M:%S.%f]')+" frame err!")
                             else:
-                                can_val = struct.unpack("<I", frame.data[4:8])[0]
+                                can_val = struct.unpack(
+                                    "<I", frame.data[4:8])[0]
                                 if (abs(val-can_val)/(abs(val)+1e-12) > 0.01):
                                     print(datetime.datetime.now().strftime(
                                         '[%H:%M:%S.%f]')+" CAN err!")
                                     comSta = False
 
-                        case "uint32_t" :
+                        case "int32_t":
+                            val = int(val)
                             txFrameData = struct.pack(
                                 "<I", varDict[namex]) + struct.pack("<i", val)
                             txFrame = Frame(id_=4, data=txFrameData, dlc=8)
@@ -744,13 +833,15 @@ def setMCUVarUtil(namex, val):
                                 print(datetime.datetime.now().strftime(
                                     '[%H:%M:%S.%f]')+" frame err!")
                             else:
-                                can_val = struct.unpack("<i", frame.data[4:8])[0]
+                                can_val = struct.unpack(
+                                    "<i", frame.data[4:8])[0]
                                 if (abs(val-can_val)/(abs(val)+1e-12) > 0.01):
                                     print(datetime.datetime.now().strftime(
                                         '[%H:%M:%S.%f]')+" CAN err!")
                                     comSta = False
 
-                        case "float" :
+                        case "float":
+                            val = float(val)
                             txFrameData = struct.pack(
                                 "<I", varDict[namex]) + struct.pack("<f", val)
                             txFrame = Frame(id_=4, data=txFrameData, dlc=8)
@@ -762,7 +853,8 @@ def setMCUVarUtil(namex, val):
                                 print(datetime.datetime.now().strftime(
                                     '[%H:%M:%S.%f]')+" frame err!")
                             else:
-                                can_val = struct.unpack("<f", frame.data[4:8])[0]
+                                can_val = struct.unpack(
+                                    "<f", frame.data[4:8])[0]
                                 if (abs(val-can_val)/(abs(val)+1e-12) > 0.01):
                                     print(datetime.datetime.now().strftime(
                                         '[%H:%M:%S.%f]')+" CAN err!")
@@ -776,7 +868,7 @@ def setMCUVarUtil(namex, val):
                     try:
                         ch.busOff()
                         ch.close()
-                    except :
+                    except:
                         print("ch close err...\n")
 
                 return comSta
@@ -897,7 +989,7 @@ def setTrigConf():
         try:
             ch.busOff()
             ch.close()
-        except :
+        except:
             print("ch close err...\n")
 
 # dump RAM的辅助函数
@@ -918,7 +1010,7 @@ def dumpBuff():
     txFrameData = struct.pack("<I", startAddr) + struct.pack("<I", endAddr)
     txFrame = Frame(id_=1, data=txFrameData, dlc=8)
 
-    dumpErr=False
+    dumpErr = False
 
     try:
         ch.write(txFrame)
@@ -926,7 +1018,7 @@ def dumpBuff():
         try:
             ch.busOff()
             ch.close()
-        except :
+        except:
             pass
         self.statusBar().showMessage("dump com fail!", 1000)
         print(datetime.datetime.now().strftime(
@@ -958,7 +1050,8 @@ def dumpBuff():
             frame_cnt += 1
             frame_cnt2 += 1
             if (frame_cnt2 == 100):
-                w.statusBar().showMessage(f"recv {frame_cnt:>6} / all {dumpSize:>6} ({frame_cnt/dumpSize:>.2%})", 1000)
+                w.statusBar().showMessage(
+                    f"recv {frame_cnt:>6} / all {dumpSize:>6} ({frame_cnt/dumpSize:>.2%})", 1000)
                 QtWidgets.QApplication.processEvents()
                 frame_cnt2 = 0
 
@@ -1003,10 +1096,61 @@ def dumpBuff():
     try:
         ch.busOff()
         ch.close()
-    except :
+    except:
         pass
 
     return dumpErr
+
+
+def advancedParaSet(name: str, baseVal: float, mode: int, srcList: list, runStep: int, tickDurMs: int, idx: int):  # 返回设定值
+    global advancedParaSetExecTime
+    advancedParaSetExecTime = time.time()
+    setVal = baseVal
+    idx = idx % len(srcList)
+
+    while (runStep != 0):
+        # 等待时机
+        while(time.time() < advancedParaSetExecTime):
+            # wait
+            QtWidgets.QApplication.processEvents()
+        # 更新时间
+        advancedParaSetExecTime += tickDurMs*0.001
+        if(runStep > 0):
+            # 计算更新值
+            match mode:
+                case 0:
+                    # 线性
+                    setVal += srcList[idx]
+                case 1:
+                    # 对数
+                    setVal *= srcList[idx]
+                case 2:
+                    # LUT
+                    setVal = srcList[idx]
+
+            idx = (idx+1) % len(srcList)
+            setMCUVarUtil(name, setVal)
+            runStep -= 1
+        else:
+            # 计算更新值
+            # 逆向运行的时候要先减
+            idx = (idx-1) % len(srcList)
+            match mode:
+                case 0:
+                    # 线性
+                    setVal -= srcList[idx]
+                case 1:
+                    # 对数
+                    if(srcList[idx] == 0):
+                        srcList[idx] = 1
+                    setVal /= srcList[idx]
+                case 2:
+                    # LUT
+                    setVal = srcList[idx]
+
+            setMCUVarUtil(name, setVal)
+            runStep += 1
+    return setVal
 
 
 def gui_task():
@@ -1058,16 +1202,19 @@ startAddr = 0x9000
 dumpSize = buffSize
 endAddr = startAddr+2*dumpSize
 totalCycle = maxRecTick
-cbStr = "Str 2 cb test"
+cbStr = "Str 2 clipboard test"
 recvDict = {}
 valYnpTab = []
+IsrFreq = 10e3
 try:
     loc = {"val": 0}
     exec("val = " + IsrFreq_init, None, loc)
     IsrFreq = loc['val']
 except Exception:
     print("IsrFreq_init err!")
-timex = np.arange(totalCycle)/IsrFreq
+
+advancedParaSetExecTime = time.time()
+gExportDict = {}
 
 # 等待标记
 waitingFlg = False
@@ -1081,4 +1228,4 @@ gui_thread.start()
 
 # 提示字符
 print("\n"+datetime.datetime.now().strftime('[%H:%M:%S.%f] ')
-    + VERSION_STR+" started!\n")
+      + VERSION_STR+" started!\n")
