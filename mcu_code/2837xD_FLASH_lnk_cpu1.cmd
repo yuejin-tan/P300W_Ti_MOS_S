@@ -88,6 +88,7 @@ SECTIONS
    .stack              : > RAMM0_1,      PAGE = 1
    .ebss               : > RAMGS12,      PAGE = 1
    .esysmem            : > RAMGS12,      PAGE = 1
+   FPUmathTables       : > RAMGS12,   PAGE = 1
 
    /* Initalized sections go in Flash */
    .econst             : >> FLASHF,      PAGE = 0, ALIGN(8)
