@@ -9,6 +9,7 @@
 #define INCX_ISR_H_
 
 interrupt void adca1_isr(void);
+interrupt void adcb1_isr(void);
 
 interrupt void NOTUSED_ISR_TYJ(void);
 

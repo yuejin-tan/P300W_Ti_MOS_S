@@ -399,7 +399,7 @@ static void cfg_epwm_1pha(volatile struct EPWM_REGS* EPwmxRegs, int syncMode)
     return;
 }
 
-static void init_epwm_CH1()
+static void init_ePWM()
 {
 
     // 设置时钟
@@ -408,6 +408,8 @@ static void init_epwm_CH1()
     // 100MHz 分频
     ClkCfgRegs.PERCLKDIVSEL.bit.EPWMCLKDIV = 1;
     CpuSysRegs.PCLKCR2.bit.EPWM1 = 1;
+    CpuSysRegs.PCLKCR2.bit.EPWM2 = 1;
+    CpuSysRegs.PCLKCR2.bit.EPWM3 = 1;
 
     CpuSysRegs.PCLKCR2.bit.EPWM4 = 1;
     CpuSysRegs.PCLKCR2.bit.EPWM5 = 1;
@@ -419,6 +421,8 @@ static void init_epwm_CH1()
 
     // epwm1 BASE
     cfg_epwm_1pha(&EPwm1Regs, 0);
+    cfg_epwm_1pha(&EPwm2Regs, 1);
+    cfg_epwm_1pha(&EPwm3Regs, 1);
 
     cfg_epwm_1pha(&EPwm4Regs, 1);
     cfg_epwm_1pha(&EPwm5Regs, 1);
@@ -432,24 +436,42 @@ static void init_epwm_CH1()
     EPwm8Regs.AQCSFRC.bit.CSFA = 0;
     EPwm8Regs.AQCSFRC.bit.CSFB = 0;
 
-    // 配置EPWM的CH1的触发事件
-#if 1
+    // 配置EPWM触发ADC事件
     // 在CH1的a相上，只在数到零时触发
-    volatile struct EPWM_REGS* EPwmxRegs = &EPwm4Regs;
-    EPwmxRegs->ETSEL.all = 0;
-    EPwmxRegs->ETSEL.bit.SOCAEN = 1;
+    // 由于CH1是HALL电流采样，故在波峰触发也没啥问题，偷懒就不改移相角了
+    // 该版程序实际上不支持灵活切换双采样了，但其实无伤大雅，摆烂了
+    {
+        volatile struct EPWM_REGS* EPwmxRegs = &EPwm1Regs;
+        EPwmxRegs->ETSEL.all = 0;
+        EPwmxRegs->ETSEL.bit.SOCAEN = 1;
 
 #if MATLAB_PARA_ctrl_freq_mul == 2
-    EPwmxRegs->ETSEL.bit.SOCASEL = ET_CTR_PRDZERO;
+        EPwmxRegs->ETSEL.bit.SOCASEL = ET_CTR_PRDZERO;
 #else
-    EPwmxRegs->ETSEL.bit.SOCASEL = ET_CTR_ZERO;
+        EPwmxRegs->ETSEL.bit.SOCASEL = ET_CTR_PRD;
 #endif
 
-    EPwmxRegs->ETPS.all = 0;
-    EPwmxRegs->ETPS.bit.SOCAPRD = 1;
-    // 无需使用高级特性
+        EPwmxRegs->ETPS.all = 0;
+        EPwmxRegs->ETPS.bit.SOCAPRD = 1;
+        // 无需使用高级特性
+    }
 
+    // 在CH2的a相上，只在数到零时触发
+    {
+        volatile struct EPWM_REGS* EPwmxRegs = &EPwm4Regs;
+        EPwmxRegs->ETSEL.all = 0;
+        EPwmxRegs->ETSEL.bit.SOCAEN = 1;
+
+#if MATLAB_PARA_ctrl_freq_mul == 2
+        EPwmxRegs->ETSEL.bit.SOCASEL = ET_CTR_PRDZERO;
+#else
+        EPwmxRegs->ETSEL.bit.SOCASEL = ET_CTR_ZERO;
 #endif
+
+        EPwmxRegs->ETPS.all = 0;
+        EPwmxRegs->ETPS.bit.SOCAPRD = 1;
+        // 无需使用高级特性
+    }
 
     // 配置与epwm相关的GPIO
     // 上电后GPIO被配置成上拉（关闭）态，因此最后配置GPIO即可
@@ -458,6 +480,13 @@ static void init_epwm_CH1()
 
     EALLOW;
     // Disable pull-up
+    GpioCtrlRegs.GPAPUD.bit.GPIO0 = 1;
+    GpioCtrlRegs.GPAPUD.bit.GPIO1 = 1;
+    GpioCtrlRegs.GPAPUD.bit.GPIO2 = 1;
+    GpioCtrlRegs.GPAPUD.bit.GPIO3 = 1;
+    GpioCtrlRegs.GPAPUD.bit.GPIO4 = 1;
+    GpioCtrlRegs.GPAPUD.bit.GPIO5 = 1;
+
     GpioCtrlRegs.GPAPUD.bit.GPIO6 = 1;
     GpioCtrlRegs.GPAPUD.bit.GPIO7 = 1;
     GpioCtrlRegs.GPAPUD.bit.GPIO8 = 1;
@@ -468,6 +497,13 @@ static void init_epwm_CH1()
     GpioCtrlRegs.GPAPUD.bit.GPIO15 = 1;
 
     // Configure GPIOx
+    GpioCtrlRegs.GPAMUX1.bit.GPIO0 = 1;
+    GpioCtrlRegs.GPAMUX1.bit.GPIO1 = 1;
+    GpioCtrlRegs.GPAMUX1.bit.GPIO2 = 1;
+    GpioCtrlRegs.GPAMUX1.bit.GPIO3 = 1;
+    GpioCtrlRegs.GPAMUX1.bit.GPIO4 = 1;
+    GpioCtrlRegs.GPAMUX1.bit.GPIO5 = 1;
+
     GpioCtrlRegs.GPAMUX1.bit.GPIO6 = 1;
     GpioCtrlRegs.GPAMUX1.bit.GPIO7 = 1;
     GpioCtrlRegs.GPAMUX1.bit.GPIO8 = 1;
@@ -497,7 +533,7 @@ static void init_adc_power_up()
     AdcSetMode(ADC_ADCA, ADC_RESOLUTION_12BIT, ADC_SIGNALMODE_SINGLE);
     AdcSetMode(ADC_ADCB, ADC_RESOLUTION_12BIT, ADC_SIGNALMODE_SINGLE);
     AdcSetMode(ADC_ADCC, ADC_RESOLUTION_12BIT, ADC_SIGNALMODE_SINGLE);
-    AdcSetMode(ADC_ADCD, ADC_RESOLUTION_12BIT, ADC_SIGNALMODE_SINGLE);
+    AdcSetMode(ADC_ADCD, ADC_RESOLUTION_16BIT, ADC_SIGNALMODE_DIFFERENTIAL);
     // late中断
     AdcaRegs.ADCCTL1.bit.INTPULSEPOS = 1;
     AdcbRegs.ADCCTL1.bit.INTPULSEPOS = 1;
@@ -522,19 +558,23 @@ static void init_adc_a()
 {
     EALLOW;
     // 使用3高优先级, 确保中断发生时需要的都采到了
-    AdcaRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 3;
+    AdcaRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 4;
 
-    AdcaRegs.ADCSOC0CTL.bit.CHSEL = 4;   // ch1 Ic
+    AdcaRegs.ADCSOC0CTL.bit.CHSEL = 4;   // ch2 Ic
     AdcaRegs.ADCSOC0CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdcaRegs.ADCSOC0CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
 
-    AdcaRegs.ADCSOC1CTL.bit.CHSEL = 15;  // ch1 Va
+    AdcaRegs.ADCSOC1CTL.bit.CHSEL = 15;  // ch2 Va
     AdcaRegs.ADCSOC1CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdcaRegs.ADCSOC1CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
 
-    AdcaRegs.ADCSOC2CTL.bit.CHSEL = 5;   // ch1 Udc
+    AdcaRegs.ADCSOC2CTL.bit.CHSEL = 5;   // ch2 Udc
     AdcaRegs.ADCSOC2CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdcaRegs.ADCSOC2CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
+
+    AdcaRegs.ADCSOC3CTL.bit.CHSEL = 3;   // ch1 Ic
+    AdcaRegs.ADCSOC3CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
+    AdcaRegs.ADCSOC3CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
 
     AdcaRegs.ADCINTSEL1N2.bit.INT1SEL = 2;  //end of SOC2 will set INT1 flag
     AdcaRegs.ADCINTSEL1N2.bit.INT1CONT = 1; //允许重复中断
@@ -550,17 +590,30 @@ static void init_adc_b()
 {
     EALLOW;
     // 使用2高优先级
-    AdcbRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 2;
+    AdcbRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 4;
 
-    AdcbRegs.ADCSOC0CTL.bit.CHSEL = 4;   // ch1 Ib
+    AdcbRegs.ADCSOC0CTL.bit.CHSEL = 4;   // ch2 Ib
     AdcbRegs.ADCSOC0CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdcbRegs.ADCSOC0CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
 
-    AdcbRegs.ADCSOC1CTL.bit.CHSEL = 5;   // ch1 Vc
+    AdcbRegs.ADCSOC1CTL.bit.CHSEL = 5;   // ch2 Vc
     AdcbRegs.ADCSOC1CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdcbRegs.ADCSOC1CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
 
+    AdcbRegs.ADCSOC2CTL.bit.CHSEL = 3;   // ch1 Ib
+    AdcbRegs.ADCSOC2CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
+    AdcbRegs.ADCSOC2CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
+
+    AdcbRegs.ADCSOC3CTL.bit.CHSEL = 14;   // ch1 Udc
+    AdcbRegs.ADCSOC3CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
+    AdcbRegs.ADCSOC3CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
+
+    AdcbRegs.ADCINTSEL1N2.bit.INT1SEL = 3;  //end of SOC3 will set INT1 flag
+    AdcbRegs.ADCINTSEL1N2.bit.INT1CONT = 1; //允许重复中断
+    AdcbRegs.ADCINTSEL1N2.bit.INT1E = 1;    //enable INT1 flag
     EDIS;
+
+    AdcbRegs.ADCINTFLGCLR.bit.ADCINT1 = 1; //clear INT1 flag
 
     return;
 }
@@ -569,16 +622,19 @@ static void init_adc_c()
 {
     EALLOW;
     // 使用2高优先级
-    AdccRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 2;
+    AdccRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 3;
 
-    AdccRegs.ADCSOC0CTL.bit.CHSEL = 4;   // ch1 Ia
+    AdccRegs.ADCSOC0CTL.bit.CHSEL = 4;   // ch2 Ia
     AdccRegs.ADCSOC0CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdccRegs.ADCSOC0CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
 
-    AdccRegs.ADCSOC1CTL.bit.CHSEL = 5;   // ch1 Vb
+    AdccRegs.ADCSOC1CTL.bit.CHSEL = 5;   // ch2 Vb
     AdccRegs.ADCSOC1CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdccRegs.ADCSOC1CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
 
+    AdccRegs.ADCSOC2CTL.bit.CHSEL = 3;   // ch1 Ia
+    AdccRegs.ADCSOC2CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
+    AdccRegs.ADCSOC2CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
     EDIS;
 
     return;
@@ -588,31 +644,19 @@ static void init_adc_d()
 {
     EALLOW;
     // 使用2高优先级
-    AdcdRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 2;
+    AdcdRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 0;
 
-    AdcdRegs.ADCSOC0CTL.bit.CHSEL = 4;   // diff1
-    AdcdRegs.ADCSOC0CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
-    AdcdRegs.ADCSOC0CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
+    AdcdRegs.ADCSOC0CTL.bit.CHSEL = 4;   // diff channel
+    AdcdRegs.ADCSOC0CTL.bit.ACQPS = ADC_SAMP_TICKS * 2;  //sample time
+    AdcdRegs.ADCSOC0CTL.bit.TRIGSEL = 0; //trigger sw
 
-    AdcdRegs.ADCSOC1CTL.bit.CHSEL = 5;   // diff2
-    AdcdRegs.ADCSOC1CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
-    AdcdRegs.ADCSOC1CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
+    AdcdRegs.ADCSOC1CTL.bit.CHSEL = 0;   // V ntc
+    AdcdRegs.ADCSOC1CTL.bit.ACQPS = ADC_SAMP_TICKS * 2;  //sample time
+    AdcdRegs.ADCSOC1CTL.bit.TRIGSEL = 0; //trigger sw
 
-    AdcdRegs.ADCSOC2CTL.bit.CHSEL = 0;   // resv
-    AdcdRegs.ADCSOC2CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
+    AdcdRegs.ADCSOC2CTL.bit.CHSEL = 2;   // V 3kOhm ref
+    AdcdRegs.ADCSOC2CTL.bit.ACQPS = ADC_SAMP_TICKS * 2;  //sample time
     AdcdRegs.ADCSOC2CTL.bit.TRIGSEL = 0; //trigger sw
-
-    AdcdRegs.ADCSOC3CTL.bit.CHSEL = 1;  // resv
-    AdcdRegs.ADCSOC3CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
-    AdcdRegs.ADCSOC3CTL.bit.TRIGSEL = 0; //trigger sw
-
-    AdcdRegs.ADCSOC4CTL.bit.CHSEL = 2;  // resv
-    AdcdRegs.ADCSOC4CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
-    AdcdRegs.ADCSOC4CTL.bit.TRIGSEL = 0; //trigger sw
-
-    AdcdRegs.ADCSOC5CTL.bit.CHSEL = 3;  // resv
-    AdcdRegs.ADCSOC5CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
-    AdcdRegs.ADCSOC5CTL.bit.TRIGSEL = 0; //trigger sw
 
     EDIS;
 
@@ -678,6 +722,15 @@ static void init_eqep2(int ifInvQaQb)
 
 static void init_board_gpio()
 {
+    // POWER fault CH1 gpio19
+    GPIO_SetupPinMux(19, GPIO_MUX_CPU1, 0);
+    GPIO_SetupPinOptions(19, GPIO_INPUT, GPIO_PULLUP | GPIO_QUAL6);
+
+    // POWER EN CH1 gpio16 上电后复位
+    GPIO_SetupPinMux(16, GPIO_MUX_CPU1, 0);
+    GPIO_SetupPinOptions(16, GPIO_OUTPUT, GPIO_PUSHPULL);
+    bsp_POWER_EN_CH1(0);
+
     // DRV8305 fault gpio139
     GPIO_SetupPinMux(139, GPIO_MUX_CPU1, 0);
     GPIO_SetupPinOptions(139, GPIO_INPUT, GPIO_PULLUP | GPIO_QUAL6);
@@ -688,10 +741,15 @@ static void init_board_gpio()
     GPIO_SetupPinOptions(27, GPIO_OUTPUT, GPIO_PUSHPULL);
     GPIO_WritePin(27, 1);
 
-    // POWER EN gpio26 上电后复位
+    // POWER EN CH2 gpio26 上电后复位
     GPIO_SetupPinMux(26, GPIO_MUX_CPU1, 0);
     GPIO_SetupPinOptions(26, GPIO_OUTPUT, GPIO_PUSHPULL);
-    bsp_POWER_EN_CH1(0);
+    bsp_POWER_EN_CH2(0);
+
+    // 预留引脚(3.3V -> 5V output)
+    GPIO_SetupPinMux(24, GPIO_MUX_CPU1, 0);
+    GPIO_SetupPinOptions(24, GPIO_OUTPUT, GPIO_PUSHPULL);
+    GPIO_WritePin(24, 0);
 
     // LEDS
     // LED D9 RED
@@ -752,7 +810,7 @@ void bsp_init_chip_devs()
     init_board_gpio();
     init_uart_A();
     init_canB_cpu1();
-    init_epwm_CH1();
+    init_ePWM();
     init_adc_power_up();
     DELAY_US(1000);
     init_adc_a();
@@ -837,6 +895,8 @@ void bsp_interrupt_cfg()
 
     EALLOW;
     PieVectTable.ADCA1_INT = &adca1_isr; //function for ADCA interrupt 1
+
+    PieVectTable.ADCB1_INT = &adcb1_isr; //function for ADCB interrupt 1
     EDIS;
 
     //Enable group 1 interrupts
@@ -844,6 +904,7 @@ void bsp_interrupt_cfg()
 
     // enable PIE interrupt
     PieCtrlRegs.PIEIER1.bit.INTx1 = 1;
+    PieCtrlRegs.PIEIER1.bit.INTx2 = 1;
 
     // Enables PIE to drive a pulse into the CPU
     PieCtrlRegs.PIEACK.all = 0xFFFF;
@@ -873,7 +934,7 @@ void bsp_start()
     CpuTimer1Regs.TCR.bit.TSS = 0;
 
     // 在该控制板上，先要等强电上电，才能校准偏置
-    while (CH1_Udc < CH1_Udc_LThd)
+    while (CH2_Udc < CH2_Udc_LThd)
     {
 #ifdef _SCD_ENABLE
         // 保证调试功能正常
@@ -884,13 +945,35 @@ void bsp_start()
     }
     // 等待10ms，保证drv8305完成初始化
     DELAY_US(10000);
-    // 起动DRV8305
+    // 起动IPM
     bsp_POWER_EN_CH1(1);
+    // 起动DRV8305
+    bsp_POWER_EN_CH2(1);
     // 再等待1ms
     DELAY_US(1000);
 
     // 初始化adc偏置
     adcOffset_init(4000);
+
+    // 清下故障（主要是drv8305时序摆烂了）
+    IProtectFlg_CH1 = 0;
+    IProtectFlg_CH2 = 0;
+    UdcProtectFlg_CH1 = 0;
+    UdcProtectFlg_CH2 = 0;
+    SPDProtectFlg = 0;
+    tempProtectFlg = 0;
+
+    // 控制模式归下零
+    CH1_cur_mode = 0;
+    CH2_cur_mode = 0;
+    speed_mode = 0;
+    speed_mode2 = 0;
+    torque_mode = 0;
+    torque_mode2 = 0;
+    channel_mode = 0;
+    channel_mode2 = 0;
+    CH1_angle_mode = 0;
+    CH2_angle_mode = 0;
 
 #ifdef _DEBUG
     // Enable Global realtime interrupt DBGM

@@ -44,6 +44,7 @@
         "samp.h": "c",
         "speed_cal.h": "c",
         "bsp_inline2.h": "c",
-        "svpwm.h": "c"
+        "svpwm.h": "c",
+        "isr.h": "c"
     }
 }

@@ -22,8 +22,8 @@
 #define MATLAB_PARA_faif 0.017000
 #define MATLAB_PARA_p0 4
 #define MATLAB_PARA_Ron 0.050000
-#define MATLAB_PARA_Vsat 0.050000
-#define MATLAB_PARA_Vdf 0.050000
+#define MATLAB_PARA_Vsat 0.800000
+#define MATLAB_PARA_Vdf 0.800000
 #define MATLAB_PARA_Iloop_bw_factor 0.166667
 #define MATLAB_PARA_Upi_max 13.856406
 #define MATLAB_PARA_tick_dead 100.000000
