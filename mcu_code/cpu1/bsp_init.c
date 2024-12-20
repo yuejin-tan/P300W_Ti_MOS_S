@@ -378,7 +378,7 @@ static void cfg_epwm_1pha(volatile struct EPWM_REGS* EPwmxRegs, int syncMode)
     EPwmxRegs->DBCTL.bit.LOADREDMODE = TYJ_DB_LOAD_ZERO_PRD;
     EPwmxRegs->DBCTL.bit.IN_MODE = DBA_RED_DBB_FED;
 
-    // DRV8305 高有效
+    // DRV8305 高有效，闲鱼IGBT也定义为高有效
     EPwmxRegs->DBCTL.bit.POLSEL = DB_ACTV_HIC;
 
     EPwmxRegs->DBCTL.bit.OUT_MODE = DB_FULL_ENABLE;
@@ -427,6 +427,14 @@ static void init_ePWM()
     cfg_epwm_1pha(&EPwm4Regs, 1);
     cfg_epwm_1pha(&EPwm5Regs, 1);
     cfg_epwm_1pha(&EPwm6Regs, 1);
+
+    // 补丁：ch2 MOS 的死区时间为1us
+    EPwm4Regs.DBRED.bit.DBRED = 100;
+    EPwm4Regs.DBFED.bit.DBFED = 100;
+    EPwm5Regs.DBRED.bit.DBRED = 100;
+    EPwm5Regs.DBFED.bit.DBFED = 100;
+    EPwm6Regs.DBRED.bit.DBRED = 100;
+    EPwm6Regs.DBFED.bit.DBFED = 100;
 
     // epwm7 用于计算CPU1的中断时间
     cfg_epwm_1pha(&EPwm7Regs, 1);

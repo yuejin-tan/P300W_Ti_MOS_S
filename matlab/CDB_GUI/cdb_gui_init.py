@@ -171,20 +171,20 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
             loc = {"val": 0}
             exec("val = "+self.lineEdit_sAddr.text(), None, loc)
             startAddr = int(loc['val'])
-        except Exception:
+        except Exception as e:
             print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" startAddr err!", file=sys.stderr)
-            self.statusBar().showMessage("startAddr err!", 1000)
+                '[%H:%M:%S.%f]')+" startAddr err! "+e.__str__(), file=sys.stderr)
+            self.statusBar().showMessage("startAddr err! "+e.__str__(), 1000)
             return
 
         try:
             loc = {"val": 0}
             exec("val = "+self.lineEdit_dSize.text(), None, loc)
             dumpSize = int(loc['val'])
-        except Exception:
+        except Exception as e:
             print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" dumpSize err!", file=sys.stderr)
-            self.statusBar().showMessage("dumpSize err!", 1000)
+                '[%H:%M:%S.%f]')+" dumpSize err! "+e.__str__(), file=sys.stderr)
+            self.statusBar().showMessage("dumpSize err! "+e.__str__(), 1000)
             return
 
         endAddr = startAddr+2*dumpSize
@@ -250,11 +250,11 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
                     self.statusBar().showMessage(
                         "decoding {} type err!".format(logTarNameList[ii]), 1000)
                     break
-        except Exception:
+        except Exception as e:
             print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" decoding err2!", file=sys.stderr)
+                '[%H:%M:%S.%f]')+" decoding err2! "+e.__str__(), file=sys.stderr)
             self.statusBar().showMessage(
-                "decoding err2!", 1000)
+                "decoding err2! "+e.__str__(), 1000)
 
     def updateIsrFreqUtil(self):
         global IsrFreq
@@ -262,10 +262,10 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
             loc = {"val": 0}
             exec("val = "+self.lineEdit_isrFreq.text(), None, loc)
             IsrFreq = loc['val']
-        except Exception:
+        except Exception as e:
             print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" IsrFreq err!", file=sys.stderr)
-            self.statusBar().showMessage("IsrFreq err!", 1000)
+                '[%H:%M:%S.%f]')+" IsrFreq err! "+e.__str__(), file=sys.stderr)
+            self.statusBar().showMessage("IsrFreq err! "+e.__str__(), 1000)
             return
 
     def toCbSlot(self):
@@ -347,10 +347,10 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
         try:
             trigSrcAddrList = [varDict[trigSrcNameX] if trigSrcNameX != "" else 0
                                for trigSrcNameX in trigSrcNameList]
-        except Exception:
+        except Exception as e:
             print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" trigSrc name err!", file=sys.stderr)
-            self.statusBar().showMessage("trigSrc name err!", 1000)
+                '[%H:%M:%S.%f]')+" trigSrc name err! "+e.__str__(), file=sys.stderr)
+            self.statusBar().showMessage("trigSrc name err! "+e.__str__(), 1000)
             return
 
         global logTarNameList
@@ -392,10 +392,10 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
         try:
             logTarAddrList = [varDict[logTarNameX]
                               for logTarNameX in logTarNameList]
-        except Exception:
+        except Exception as e:
             print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" logSrc name err!", file=sys.stderr)
-            self.statusBar().showMessage("logSrc name err!", 1000)
+                '[%H:%M:%S.%f]')+" logSrc name err! "+e.__str__(), file=sys.stderr)
+            self.statusBar().showMessage("logSrc name err! "+e.__str__(), 1000)
             return
 
         global logTarCnt
@@ -412,10 +412,10 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
             loc = {"val": 0}
             exec("val = "+self.lineEdit_buffSize.text(), None, loc)
             buffSize = int(loc['val'])
-        except Exception:
+        except Exception as e:
             print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" buffSize err!", file=sys.stderr)
-            self.statusBar().showMessage("buffSize err!", 1000)
+                '[%H:%M:%S.%f]')+" buffSize err! "+e.__str__(), file=sys.stderr)
+            self.statusBar().showMessage("buffSize err! "+e.__str__(), 1000)
             return
 
         # 最大采样tick
@@ -433,10 +433,10 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
             loc = {"val": 0}
             exec("val = "+self.lineEdit_trigtime.text(), None, loc)
             trigTimeTar = loc['val']
-        except Exception:
+        except Exception as e:
             print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" trigTimeTar err!", file=sys.stderr)
-            self.statusBar().showMessage("trigTimeTar err!", 1000)
+                '[%H:%M:%S.%f]')+" trigTimeTar err! "+e.__str__(), file=sys.stderr)
+            self.statusBar().showMessage("trigTimeTar err! "+e.__str__(), 1000)
             return
 
         # 触发阈值
@@ -445,10 +445,10 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
             loc = {"val": 0}
             exec("val = "+self.lineEdit_trigThd.text(), None, loc)
             trigThd = loc['val']
-        except Exception:
+        except Exception as e:
             print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" trigThd err!", file=sys.stderr)
-            self.statusBar().showMessage("trigThd err!", 1000)
+                '[%H:%M:%S.%f]')+" trigThd err! "+e.__str__(), file=sys.stderr)
+            self.statusBar().showMessage("trigThd err! "+e.__str__(), 1000)
             return
 
         # 源模式
@@ -473,20 +473,20 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
 
         try:
             setTrigConf()
-        except Exception:
+        except Exception as e:
             print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" trigCfg err!", file=sys.stderr)
-            self.statusBar().showMessage("trigCfg err!", 1000)
+                '[%H:%M:%S.%f]')+" trigCfg err! "+e.__str__(), file=sys.stderr)
+            self.statusBar().showMessage("trigCfg err! "+e.__str__(), 1000)
         else:
             self.statusBar().showMessage("trigCfg OK!", 1000)
 
     def paraSetRSlot(self, nameEdit, valEdit):
         try:
             ret = readMCUVarUtil(nameEdit.text())
-        except Exception:
+        except Exception as e:
             print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" paraSetR err!", file=sys.stderr)
-            self.statusBar().showMessage("paraSetR err!", 1000)
+                '[%H:%M:%S.%f]')+" paraSetR err! "+e.__str__(), file=sys.stderr)
+            self.statusBar().showMessage("paraSetR err! "+e.__str__(), 1000)
         else:
             if (ret != None):
                 valEdit.setText(str(ret))
@@ -496,20 +496,20 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
         try:
             val = 0
             loc = {"val": 0}
-            exec("val = "+self.valEdit.text()+"\n", None, loc)
+            exec("val = "+valEdit.text()+"\n", None, loc)
             val = loc['val']
 
-        except Exception:
+        except Exception as e:
             print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" val err!", file=sys.stderr)
-            self.statusBar().showMessage("val err!", 1000)
+                '[%H:%M:%S.%f]')+" val err! "+e.__str__(), file=sys.stderr)
+            self.statusBar().showMessage("val err! "+e.__str__(), 1000)
         else:
             try:
                 ret = setMCUVarUtil(nameEdit.text(), val)
-            except Exception:
+            except Exception as e:
                 print(datetime.datetime.now().strftime(
-                    '[%H:%M:%S.%f]')+" paraSetW err!", file=sys.stderr)
-                self.statusBar().showMessage("paraSetW err!", 1000)
+                    '[%H:%M:%S.%f]')+" paraSetW err! "+e.__str__(), file=sys.stderr)
+                self.statusBar().showMessage("paraSetW err! "+e.__str__(), 1000)
             else:
                 if (ret == True):
                     self.statusBar().showMessage("write ok", 1000)
@@ -540,12 +540,12 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
                 try:
                     trigSta = readMCUVarUtil("cdb1.trigSta")
                     pass
-                except Exception:
+                except Exception as e:
                     waitingFlg = False
                     self.pushButton_np.setText("wait for trig")
-                    self.statusBar().showMessage("CAN comm err while wait!", 1000)
+                    self.statusBar().showMessage("CAN comm err while wait! "+e.__str__(), 1000)
                     print(datetime.datetime.now().strftime(
-                        '[%H:%M:%S.%f]')+" CAN comm err while wait!", file=sys.stderr)
+                        '[%H:%M:%S.%f]')+" CAN comm err while wait! "+e.__str__(), file=sys.stderr)
                     return
 
                 if (trigSta >= 5):
@@ -581,10 +581,10 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
                 loc = {"val": 0}
                 exec("val = "+self.lineEdit_baseVal.text()+"\n", None, loc)
                 baseVal = loc['val']
-            except Exception:
+            except Exception as e:
                 print(datetime.datetime.now().strftime(
-                    '[%H:%M:%S.%f]')+" base val err!", file=sys.stderr)
-                self.statusBar().showMessage("base val err!", 1000)
+                    '[%H:%M:%S.%f]')+" base val err! "+e.__str__(), file=sys.stderr)
+                self.statusBar().showMessage("base val err! "+e.__str__(), 1000)
                 self.pushButton_preRun.setEnabled(True)
                 self.pushButton_normRun.setEnabled(True)
                 return
@@ -595,10 +595,10 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
             loc = {"val": 0}
             exec("val = ["+self.lineEdit_tarVal.text()+"]\n", None, loc)
             srcList = loc['val']
-        except Exception:
+        except Exception as e:
             print(datetime.datetime.now().strftime(
-                '[%H:%M:%S.%f]')+" src val err!", file=sys.stderr)
-            self.statusBar().showMessage("src val err!", 1000)
+                '[%H:%M:%S.%f]')+" src val err! "+e.__str__(), file=sys.stderr)
+            self.statusBar().showMessage("src val err! "+e.__str__(), 1000)
             self.pushButton_preRun.setEnabled(True)
             self.pushButton_normRun.setEnabled(True)
             return
@@ -1014,15 +1014,15 @@ def dumpBuff():
 
     try:
         ch.write(txFrame)
-    except Exception:
+    except Exception as e:
         try:
             ch.busOff()
             ch.close()
         except:
             pass
-        self.statusBar().showMessage("dump com fail!", 1000)
+        self.statusBar().showMessage("dump com fail! "+e.__str__(), 1000)
         print(datetime.datetime.now().strftime(
-            '[%H:%M:%S.%f]')+" dump com fail!", file=sys.stderr)
+            '[%H:%M:%S.%f]')+" dump com fail! "+e.__str__(), file=sys.stderr)
         dumpErr = True
         return dumpErr
 

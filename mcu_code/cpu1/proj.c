@@ -171,7 +171,7 @@ int16_t CH1_Iu_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 int16_t CH1_Iv_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 int16_t CH1_Iw_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 
-float CH1_IGain = 0.001f;
+float CH1_IGain = -0.0278f;
 
 int16_t CH2_Udc_raw = 0;
 int16_t CH2_Idc_raw = (MATLAB_PARA_I_bus_sense_offset * MATLAB_PARA_adc_gain);
@@ -182,8 +182,8 @@ int16_t CH2_Iw_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 uint16_t thetaEnco_raw = 0;
 uint16_t thetaEnco_raw_offset = 0;
 
-uint16_t thetaEnco_raw2 = 0;
-uint16_t thetaEnco_raw_offset2 = 0;
+uint16_t thetaEnco_raw2 = 11630;
+uint16_t thetaEnco_raw_offset2 = 14100;
 
 int32_t NTC_raw = 0;
 int32_t NTC_ref_raw = 0;
@@ -283,7 +283,7 @@ float db_cmp_vds = MATLAB_PARA_Vdf + MATLAB_PARA_Vsat;
 
 int16_t CH2_ext_fcn = 0;
 float db2_Ithd_1 = 1.0f / MATLAB_PARA_db_Ithd;
-float db2_cmp_tick = MATLAB_PARA_tick_db_comp;
+float db2_cmp_tick = 100;
 float db2_cmp_vds = 0.05f + 0.05f;
 
 int16_t speed_mode = 0;
