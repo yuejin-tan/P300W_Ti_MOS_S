@@ -180,10 +180,10 @@ int16_t CH2_Iv_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 int16_t CH2_Iw_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 
 uint16_t thetaEnco_raw = 0;
-uint16_t thetaEnco_raw_offset = 0;
+uint16_t thetaEnco_raw_offset = 10400;
 
-uint16_t thetaEnco_raw2 = 11630;
-uint16_t thetaEnco_raw_offset2 = 14100;
+uint16_t thetaEnco_raw2 = 0;
+uint16_t thetaEnco_raw_offset2 = 13400;
 
 int32_t NTC_raw = 0;
 int32_t NTC_ref_raw = 0;
@@ -433,7 +433,8 @@ void ctrl_init()
 
     PIctrl_init(&omegaPI, MATLAB_PARA_kp_wloop, MATLAB_PARA_ki_wloop, MATLAB_PARA_ki_wloop, MATLAB_PARA_Wpi_max, MATLAB_PARA_Wpi_min);
 
-    PIctrl_init(&omegaPI2, MATLAB_PARA_kp_wloop, MATLAB_PARA_ki_wloop, MATLAB_PARA_ki_wloop, MATLAB_PARA_Wpi_max, MATLAB_PARA_Wpi_min);
+    // 对拖电机参数修正
+    PIctrl_init(&omegaPI2, MATLAB_PARA_kp_wloop, MATLAB_PARA_ki_wloop, MATLAB_PARA_ki_wloop, MATLAB_PARA_Wpi_max * 0.5f, MATLAB_PARA_Wpi_min * 0.5f);
 
     PIctrl_init(&UdcPI, MATLAB_PARA_kp_vloop, MATLAB_PARA_ki_vloop, MATLAB_PARA_ki_vloop, MATLAB_PARA_Pdcpi_max, MATLAB_PARA_Pdcpi_min);
     PIctrl_init(&PdcPI, MATLAB_PARA_kp_ploop, MATLAB_PARA_ki_ploop, MATLAB_PARA_ki_ploop, MATLAB_PARA_Pdcpi_max, MATLAB_PARA_Pdcpi_min);
@@ -986,16 +987,7 @@ static inline void outerLoopTask()
         targetTe = PIctrl_update_bCalc2(&omegaPI, targetOmegaM - omegaMfbk);
         break;
 
-    case SM_Te_ramp:
-        targetTe = targetRamp(targetRampVal, targetTe, targetRampGrad * vCTRL_TS);
-        break;
-
-    case SM_Is_ramp:
-        targetIs = targetRamp(targetRampVal, targetIs, targetRampGrad * vCTRL_TS);
-        break;
-
     case SM_OECA_exp:
-        // TODO OECA
         switch (OECA1.status)
         {
         default:
@@ -1108,11 +1100,19 @@ static inline void outerLoopTask()
         }
         break;
 
+    case SM_Te_ramp:
+        targetTe = targetRamp(targetRampVal, targetTe, targetRampGrad * vCTRL_TS);
+        break;
+
+    case SM_Is_ramp:
+        targetIs = targetRamp(targetRampVal, targetIs, targetRampGrad * vCTRL_TS);
+        break;
+
     default:
     case SM_stop:
         // 归零指令值
         targetOmegaM = omegaMfbk;
-        targetN = targetOmegaM * (float)(60.0 / 2.0 * M_PI);
+        targetN = targetOmegaM * (float)(60.0 / 2.0 / M_PI);
         targetTe = 0;
         targetIs = 0;
         targetUdc = CH1_Udc;
@@ -1213,16 +1213,16 @@ static inline void outerLoopTask2()
         targetTe2 = PIctrl_update_bCalc2(&omegaPI2, targetOmegaM2 - omegaMfbk2);
         break;
 
+    case SM_OECA_exp:
+        // not supported
+        break;
+
     case SM_Te_ramp:
         targetTe2 = targetRamp(targetRampVal2, targetTe2, targetRampGrad2 * vCTRL_TS);
         break;
 
     case SM_Is_ramp:
         targetIs2 = targetRamp(targetRampVal2, targetIs2, targetRampGrad2 * vCTRL_TS);
-        break;
-
-    case SM_OECA_exp:
-        // not supported
         break;
 
     default:

@@ -19,7 +19,7 @@
 #define MATLAB_PARA_Ld 0.000200
 #define MATLAB_PARA_Lq 0.000300
 #define MATLAB_PARA_Rall 0.750000
-#define MATLAB_PARA_faif 0.017000
+#define MATLAB_PARA_faif 0.017200
 #define MATLAB_PARA_p0 4
 #define MATLAB_PARA_Ron 0.050000
 #define MATLAB_PARA_Vsat 0.800000
@@ -29,8 +29,8 @@
 #define MATLAB_PARA_tick_dead 200.000000
 #define MATLAB_PARA_tick_db_comp 100.000000
 #define MATLAB_PARA_db_Ithd 1.000000
-#define MATLAB_PARA_kp_wloop 0.000917
-#define MATLAB_PARA_ki_wloop 0.001528
+#define MATLAB_PARA_kp_wloop 0.004767
+#define MATLAB_PARA_ki_wloop 0.031778
 #define MATLAB_PARA_Wpi_max 2.000000
 #define MATLAB_PARA_Wpi_min -2.000000
 #define MATLAB_PARA_kp_vloop 152.777778

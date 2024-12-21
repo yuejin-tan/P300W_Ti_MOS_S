@@ -11,7 +11,6 @@ import functools
 import datetime
 import time
 import struct
-import threading
 import warnings
 import math
 
@@ -275,7 +274,7 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
         global logTarCnt
         global IsrFreq
 
-        updateIsrFreqUtil()
+        self.updateIsrFreqUtil()
         timex = np.arange(totalCycle)/IsrFreq
 
         cbStr = ""
@@ -287,8 +286,7 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
                 cbStr += str(valYnpTab[jj][ii])
             cbStr += "\n"
 
-        clipBoard = QtWidgets.QApplication.clipboard()
-        clipBoard.setText(cbStr)
+        QtWidgets.QApplication.clipboard().setText(cbStr)
 
         self.statusBar().showMessage("to clipBoard fin!", 1000)
 
@@ -318,7 +316,7 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
         global logTarCnt
         global IsrFreq
 
-        updateIsrFreqUtil()
+        self.updateIsrFreqUtil()
         timex = np.arange(totalCycle)/IsrFreq
         # 画图分析
         plt.figure(num=self.lineEdit_figTitle.text() +
@@ -1153,9 +1151,59 @@ def advancedParaSet(name: str, baseVal: float, mode: int, srcList: list, runStep
     return setVal
 
 
-def gui_task():
-    global w
-    global app
+############## main ##############
+if __name__ == "__main__":
+    # 尝试打开端口
+    # 保证变量全局性？
+    ch = canlib.openChannel(
+        channel=0,
+        flags=canlib.Open.EXCLUSIVE | canlib.Open.ACCEPT_VIRTUAL,
+        bitrate=cdbBitrate,
+    )
+    ch.setBusOutputControl(canlib.Driver.NORMAL)
+    ch.busOn()
+    ch.busOff()
+    ch.close()
+
+    # 建立触发配置的数据结构
+    trigSrcNameList = ["a"]
+    trigSrcAddrList = []
+    logTarNameList = ["a"]
+    logTarAddrList = []
+    logTarCnt = 1
+    buffSize = int(15 * 4 * 1024 / 2)
+    maxRecTick = int(buffSize/logTarCnt)
+    logKeepRatio = 0.2
+    logKeepDataNumBeforeTrig = int(logKeepRatio * maxRecTick)*logTarCnt
+    trigTimeTar = 40 * 2
+    trigThd = 280
+    trigSrc = 0b0101_0100
+    sampInter = 0
+    trigMode = 0
+
+    # 建立dump的数据结构
+    startAddr = 0x9000
+    dumpSize = buffSize
+    endAddr = startAddr+2*dumpSize
+    totalCycle = maxRecTick
+    cbStr = "Str 2 clipboard test"
+    recvDict = {}
+    valYnpTab = []
+    IsrFreq = 10e3
+    try:
+        loc = {"val": 0}
+        exec("val = " + IsrFreq_init, None, loc)
+        IsrFreq = loc['val']
+    except Exception:
+        print("IsrFreq_init err!")
+
+    advancedParaSetExecTime = time.time()
+    gExportDict = {}
+
+    # 等待标记
+    waitingFlg = False
+
+    # 窗口
     app = QtWidgets.QApplication(sys.argv)
     fontx = QtGui.QFont()
     fontx.setPixelSize(14)
@@ -1164,68 +1212,6 @@ def gui_task():
     w = mainWindow()
     w.show()
 
-    sys.exit(app.exec())
-
-############## main ##############
-
-
-# 尝试打开端口
-# 保证变量全局性？
-ch = canlib.openChannel(
-    channel=0,
-    flags=canlib.Open.EXCLUSIVE | canlib.Open.ACCEPT_VIRTUAL,
-    bitrate=cdbBitrate,
-)
-ch.setBusOutputControl(canlib.Driver.NORMAL)
-ch.busOn()
-ch.busOff()
-ch.close()
-
-# 建立触发配置的数据结构
-trigSrcNameList = ["a"]
-trigSrcAddrList = []
-logTarNameList = ["a"]
-logTarAddrList = []
-logTarCnt = 1
-buffSize = int(15 * 4 * 1024 / 2)
-maxRecTick = int(buffSize/logTarCnt)
-logKeepRatio = 0.2
-logKeepDataNumBeforeTrig = int(logKeepRatio * maxRecTick)*logTarCnt
-trigTimeTar = 40 * 2
-trigThd = 280
-trigSrc = 0b0101_0100
-sampInter = 0
-trigMode = 0
-
-# 建立dump的数据结构
-startAddr = 0x9000
-dumpSize = buffSize
-endAddr = startAddr+2*dumpSize
-totalCycle = maxRecTick
-cbStr = "Str 2 clipboard test"
-recvDict = {}
-valYnpTab = []
-IsrFreq = 10e3
-try:
-    loc = {"val": 0}
-    exec("val = " + IsrFreq_init, None, loc)
-    IsrFreq = loc['val']
-except Exception:
-    print("IsrFreq_init err!")
-
-advancedParaSetExecTime = time.time()
-gExportDict = {}
-
-# 等待标记
-waitingFlg = False
-
-# 窗口 workaround
-w = 0
-app = 0
-
-gui_thread = threading.Thread(target=gui_task)
-gui_thread.start()
-
-# 提示字符
-print("\n"+datetime.datetime.now().strftime('[%H:%M:%S.%f] ')
-      + VERSION_STR+" started!\n")
+    # 提示字符
+    print("\n"+datetime.datetime.now().strftime('[%H:%M:%S.%f] ')
+          + VERSION_STR+" started!\n")

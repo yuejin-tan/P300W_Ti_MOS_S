@@ -26,7 +26,7 @@
 #define CUR_PRCT_INTG_BASE_UTIL (30)
 #define CUR_PRCT_INTG_BASE (CUR_PRCT_INTG_BASE_UTIL * CUR_PRCT_INTG_BASE_UTIL)
 #define CUR_PRCT_INTG_MAX (0.2 * CUR_PRCT_INTG_BASE * 0.01)
-#define CUR_PRCT_FOLW_DMAX (5.0)
+#define CUR_PRCT_FOLW_DMAX (10.0)
 #define CUR_PRCT_FOLW_INTG_MAX (CUR_PRCT_FOLW_DMAX * 0.01)
 
 // 对转小电机
@@ -39,12 +39,12 @@
 #define CUR_PRCT_FOLW_INTG_MAX2 (CUR_PRCT_FOLW_DMAX2 * 0.01)
 
 // 转速保护
-#define SPD_PRCT_THD_L (-2000.0 / 60.0 * 2.0 * M_PI)
-#define SPD_PRCT_THD_H (2000.0 / 60.0 * 2.0 * M_PI)
+#define SPD_PRCT_THD_L (-3000.0 / 60.0 * 2.0 * M_PI)
+#define SPD_PRCT_THD_H (3000.0 / 60.0 * 2.0 * M_PI)
 #define SPD_PRCT_INTG_BASE_UTIL (0)
 #define SPD_PRCT_INTG_BASE (SPD_PRCT_INTG_BASE_UTIL * SPD_PRCT_INTG_BASE_UTIL)
 #define SPD_PRCT_INTG_MAX (0)
-#define SPD_PRCT_FOLW_DMAX (50.0)
+#define SPD_PRCT_FOLW_DMAX (200.0)
 #define SPD_PRCT_FOLW_INTG_MAX (SPD_PRCT_FOLW_DMAX * 0.1)
 // 电压保护
 #define UDC_PRCT_THD_L (-3.0)
@@ -72,7 +72,7 @@
 #define DYNO_PARA_Ld 0.0011
 #define DYNO_PARA_Lq 0.0011
 #define DYNO_PARA_Rall 1.2
-#define DYNO_PARA_faif 0.014
+#define DYNO_PARA_faif 0.016
 #define DYNO_PARA_p0 4
 
 // 采样时间设置
