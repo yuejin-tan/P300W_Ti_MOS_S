@@ -171,7 +171,15 @@ int16_t CH1_Iu_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 int16_t CH1_Iv_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 int16_t CH1_Iw_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 
-float CH1_IGain = -0.0278f;
+// 高量程备份
+int16_t CH1_Iu_raw2 = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
+int16_t CH1_Iv_raw2 = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
+int16_t CH1_Iw_raw2 = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
+
+// 1.0 / 4095.0 * 5.0 * 50.0 / 3.0 的标定值
+float CH1_IGain = 0.01917;
+
+float CH1_IGain2 = -0.278f;
 
 int16_t CH2_Udc_raw = 0;
 int16_t CH2_Idc_raw = (MATLAB_PARA_I_bus_sense_offset * MATLAB_PARA_adc_gain);
@@ -179,8 +187,14 @@ int16_t CH2_Iu_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 int16_t CH2_Iv_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 int16_t CH2_Iw_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 
+int16_t CH2_Vu_raw = 0;
+int16_t CH2_Vv_raw = 0;
+int16_t CH2_Vw_raw = 0;
+
+float CH2_VGain = 1.0 / 4095.0 * 3.0 / 5.0 * (5.0 + 62.0);
+
 uint16_t thetaEnco_raw = 0;
-uint16_t thetaEnco_raw_offset = 10400;
+uint16_t thetaEnco_raw_offset = 15850;
 
 uint16_t thetaEnco_raw2 = 0;
 uint16_t thetaEnco_raw_offset2 = 13400;
@@ -202,6 +216,8 @@ float CH1_Udc_SI = 0.0f;
 float CH1_Idc_SI = 0.0f;
 
 struct Trans_struct CH1_Ifbk;
+struct Trans_struct CH1_Ifbk2;
+
 struct Trans_struct CH1_Ifilt;
 
 float CH2_Udc_SI = 0.0f;
@@ -209,6 +225,8 @@ float CH2_Idc_SI = 0.0f;
 
 struct Trans_struct CH2_Ifbk;
 struct Trans_struct CH2_Ifilt;
+
+struct Trans_struct CH2_Vfbk;
 
 // 处理(滤波)后值
 float CH1_Udc = 0.0f;
@@ -250,9 +268,13 @@ float targetRampGrad2 = 1.0f;
 
 // 控制参数
 float CH1_Idc_raw_offset = (MATLAB_PARA_I_bus_sense_offset * MATLAB_PARA_adc_gain);
-float CH1_Iu_raw_offset = 2475;
-float CH1_Iv_raw_offset = 2475;
-float CH1_Iw_raw_offset = 2475;
+float CH1_Iu_raw_offset = 2048;
+float CH1_Iv_raw_offset = 2048;
+float CH1_Iw_raw_offset = 2048;
+
+float CH1_Iu_raw_offset2 = 2475;
+float CH1_Iv_raw_offset2 = 2475;
+float CH1_Iw_raw_offset2 = 2475;
 
 float CH2_Idc_raw_offset = (MATLAB_PARA_I_bus_sense_offset * MATLAB_PARA_adc_gain);
 float CH2_Iu_raw_offset = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
@@ -353,7 +375,7 @@ do{\
 void adcOffset_init(int32_t avgNum)
 {
 
-    int32_t sumsTab[8] = { 0,0,0,0,0,0,0,0 };
+    int32_t sumsTab[12] = { 0,0,0,0,0,0,0,0,0,0,0,0 };
     float avgNum_1 = 1.0f / avgNum;
 
     DELAY_US(100);
@@ -371,6 +393,11 @@ void adcOffset_init(int32_t avgNum)
         sumsTab[5] += CH2_Iu_raw;
         sumsTab[6] += CH2_Iv_raw;
         sumsTab[7] += CH2_Iw_raw;
+
+        sumsTab[9] += CH1_Iu_raw2;
+        sumsTab[10] += CH1_Iv_raw2;
+        sumsTab[11] += CH1_Iw_raw2;
+
     }
 
     CH1_Iu_raw_offset = sumsTab[1] * avgNum_1;
@@ -380,6 +407,10 @@ void adcOffset_init(int32_t avgNum)
     CH2_Iu_raw_offset = sumsTab[5] * avgNum_1;
     CH2_Iv_raw_offset = sumsTab[6] * avgNum_1;
     CH2_Iw_raw_offset = sumsTab[7] * avgNum_1;
+
+    CH1_Iu_raw_offset2 = sumsTab[9] * avgNum_1;
+    CH1_Iv_raw_offset2 = sumsTab[10] * avgNum_1;
+    CH1_Iw_raw_offset2 = sumsTab[11] * avgNum_1;
 }
 
 static void cfg_clk_util(uint16_t pwm_freq)
@@ -470,6 +501,11 @@ static inline float getCurSI_(int16_t adcVal, float offset)
     return (adcVal - offset) * CH1_IGain;
 }
 
+static inline float getCurSI_2(int16_t adcVal, float offset)
+{
+    return (adcVal - offset) * CH1_IGain2;
+}
+
 static inline void sigSampTask()
 {
     // 摆烂没有使用DMA或CLA来读取 eqep, 故需尽早访问寄存器, 以保持延迟一致性
@@ -483,6 +519,13 @@ static inline void sigSampTask()
     CH1_Ifbk.U = getCurSI_(CH1_Iu_raw, CH1_Iu_raw_offset);
     CH1_Ifbk.V = getCurSI_(CH1_Iv_raw, CH1_Iv_raw_offset);
     CH1_Ifbk.W = getCurSI_(CH1_Iw_raw, CH1_Iw_raw_offset);
+
+    CH1_Iu_raw2 = bsp_get_CH1_Iu2_adcRaw();
+    CH1_Iv_raw2 = bsp_get_CH1_Iv2_adcRaw();
+    CH1_Iw_raw2 = bsp_get_CH1_Iw2_adcRaw();
+    CH1_Ifbk2.U = getCurSI_2(CH1_Iu_raw2, CH1_Iu_raw_offset2);
+    CH1_Ifbk2.V = getCurSI_2(CH1_Iv_raw2, CH1_Iv_raw_offset2);
+    CH1_Ifbk2.W = getCurSI_2(CH1_Iw_raw2, CH1_Iw_raw_offset2);
 
     // CH1_Idc_raw = bsp_get_CH1_Idc_adcRaw();
     // CH1_Idc_SI = getCurSI(CH1_Idc_raw, CH1_Idc_raw_offset);
@@ -532,6 +575,8 @@ static inline void sigSampTask()
     CH1_Ifilt.q = LPF_Ord2_update(&CH1_IqFilt, CH1_Ifbk.q);
     CH1_Ifilt.abdq0 = LPF_Ord2_update(&CH1_I0Filt, CH1_Ifbk.abdq0);
 
+    trans3_uvw2dq0(&CH1_Ifbk2, &CH1_thetaI);
+
     // 反变换得到滤波后的三相基波电流，此处不考虑零序
     // 使用电压的角度，以补偿控制造成的延后（有待证明？）
     trans2_dq2uvw(&CH1_Ifilt, &CH1_thetaU);
@@ -550,6 +595,13 @@ static inline void sigSampTask2()
     CH2_Ifbk.U = getCurSI(CH2_Iu_raw, CH2_Iu_raw_offset);
     CH2_Ifbk.V = getCurSI(CH2_Iv_raw, CH2_Iv_raw_offset);
     CH2_Ifbk.W = getCurSI(CH2_Iw_raw, CH2_Iw_raw_offset);
+
+    CH2_Vu_raw = bsp_get_CH2_Va_adcRaw();
+    CH2_Vv_raw = bsp_get_CH2_Vb_adcRaw();
+    CH2_Vw_raw = bsp_get_CH2_Vc_adcRaw();
+    CH2_Vfbk.U = CH2_Vu_raw * CH2_VGain;
+    CH2_Vfbk.V = CH2_Vv_raw * CH2_VGain;
+    CH2_Vfbk.W = CH2_Vw_raw * CH2_VGain;
 
     // CH2_Idc_raw = bsp_get_CH2_Idc_adcRaw();
     // CH2_Idc_SI = getCurSI(CH2_Idc_raw, CH2_Idc_raw_offset);
@@ -597,6 +649,9 @@ static inline void sigSampTask2()
     CH2_Ifilt.d = LPF_Ord2_update(&CH2_IdFilt, CH2_Ifbk.d);
     CH2_Ifilt.q = LPF_Ord2_update(&CH2_IqFilt, CH2_Ifbk.q);
     CH2_Ifilt.abdq0 = LPF_Ord2_update(&CH2_I0Filt, CH2_Ifbk.abdq0);
+
+    // 电压变换
+    trans3_uvw2dq0(&CH2_Vfbk, &CH2_thetaI);
 
     // 反变换得到滤波后的三相基波电流，此处不考虑零序
     // 使用电压的角度，以补偿控制造成的延后（有待证明？）

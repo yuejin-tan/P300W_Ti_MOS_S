@@ -566,7 +566,7 @@ static void init_adc_a()
 {
     EALLOW;
     // 使用3高优先级, 确保中断发生时需要的都采到了
-    AdcaRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 4;
+    AdcaRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 5;
 
     AdcaRegs.ADCSOC0CTL.bit.CHSEL = 4;   // ch2 Ic
     AdcaRegs.ADCSOC0CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
@@ -580,9 +580,13 @@ static void init_adc_a()
     AdcaRegs.ADCSOC2CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdcaRegs.ADCSOC2CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
 
-    AdcaRegs.ADCSOC3CTL.bit.CHSEL = 3;   // ch1 Ic
+    AdcaRegs.ADCSOC3CTL.bit.CHSEL = 3;   // ch1 Ia
     AdcaRegs.ADCSOC3CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdcaRegs.ADCSOC3CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
+
+    AdcaRegs.ADCSOC4CTL.bit.CHSEL = 2;   // ch1 Ia2
+    AdcaRegs.ADCSOC4CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
+    AdcaRegs.ADCSOC4CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
 
     AdcaRegs.ADCINTSEL1N2.bit.INT1SEL = 2;  //end of SOC2 will set INT1 flag
     AdcaRegs.ADCINTSEL1N2.bit.INT1CONT = 1; //允许重复中断
@@ -598,7 +602,7 @@ static void init_adc_b()
 {
     EALLOW;
     // 使用2高优先级
-    AdcbRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 4;
+    AdcbRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 5;
 
     AdcbRegs.ADCSOC0CTL.bit.CHSEL = 4;   // ch2 Ib
     AdcbRegs.ADCSOC0CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
@@ -612,11 +616,15 @@ static void init_adc_b()
     AdcbRegs.ADCSOC2CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdcbRegs.ADCSOC2CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
 
-    AdcbRegs.ADCSOC3CTL.bit.CHSEL = 14;   // ch1 Udc
+    AdcbRegs.ADCSOC3CTL.bit.CHSEL = 2;   // ch1 Ib2
     AdcbRegs.ADCSOC3CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdcbRegs.ADCSOC3CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
 
-    AdcbRegs.ADCINTSEL1N2.bit.INT1SEL = 3;  //end of SOC3 will set INT1 flag
+    AdcbRegs.ADCSOC4CTL.bit.CHSEL = 14;   // ch1 Udc
+    AdcbRegs.ADCSOC4CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
+    AdcbRegs.ADCSOC4CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
+
+    AdcbRegs.ADCINTSEL1N2.bit.INT1SEL = 4;  //end of SOC4 will set INT1 flag
     AdcbRegs.ADCINTSEL1N2.bit.INT1CONT = 1; //允许重复中断
     AdcbRegs.ADCINTSEL1N2.bit.INT1E = 1;    //enable INT1 flag
     EDIS;
@@ -630,7 +638,7 @@ static void init_adc_c()
 {
     EALLOW;
     // 使用2高优先级
-    AdccRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 3;
+    AdccRegs.ADCSOCPRICTL.bit.SOCPRIORITY = 4;
 
     AdccRegs.ADCSOC0CTL.bit.CHSEL = 4;   // ch2 Ia
     AdccRegs.ADCSOC0CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
@@ -640,9 +648,13 @@ static void init_adc_c()
     AdccRegs.ADCSOC1CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdccRegs.ADCSOC1CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
 
-    AdccRegs.ADCSOC2CTL.bit.CHSEL = 3;   // ch1 Ia
+    AdccRegs.ADCSOC2CTL.bit.CHSEL = 3;   // ch1 Ic
     AdccRegs.ADCSOC2CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdccRegs.ADCSOC2CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
+
+    AdccRegs.ADCSOC3CTL.bit.CHSEL = 2;   // ch1 Ic2
+    AdccRegs.ADCSOC3CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
+    AdccRegs.ADCSOC3CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
     EDIS;
 
     return;

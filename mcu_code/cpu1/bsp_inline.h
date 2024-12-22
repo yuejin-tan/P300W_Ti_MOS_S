@@ -297,11 +297,15 @@ static inline int16_t bsp_get_CH2_Udc_adcRaw(void)
     return AdcaResultRegs.ADCRESULT2;
 }
 
-static inline int16_t bsp_get_CH1_Iw_adcRaw(void)
+static inline int16_t bsp_get_CH1_Iu_adcRaw(void)
 {
     return AdcaResultRegs.ADCRESULT3;
 }
 
+static inline int16_t bsp_get_CH1_Iu2_adcRaw(void)
+{
+    return AdcaResultRegs.ADCRESULT4;
+}
 
 // adc B
 
@@ -320,9 +324,14 @@ static inline int16_t bsp_get_CH1_Iv_adcRaw(void)
     return AdcbResultRegs.ADCRESULT2;
 }
 
-static inline int16_t bsp_get_CH1_Udc_adcRaw(void)
+static inline int16_t bsp_get_CH1_Iv2_adcRaw(void)
 {
     return AdcbResultRegs.ADCRESULT3;
+}
+
+static inline int16_t bsp_get_CH1_Udc_adcRaw(void)
+{
+    return AdcbResultRegs.ADCRESULT4;
 }
 
 // adc C
@@ -337,9 +346,14 @@ static inline int16_t bsp_get_CH2_Vb_adcRaw(void)
     return AdccResultRegs.ADCRESULT1;
 }
 
-static inline int16_t bsp_get_CH1_Iu_adcRaw(void)
+static inline int16_t bsp_get_CH1_Iw_adcRaw(void)
 {
     return AdccResultRegs.ADCRESULT2;
+}
+
+static inline int16_t bsp_get_CH1_Iw2_adcRaw(void)
+{
+    return AdccResultRegs.ADCRESULT3;
 }
 
 // adc D

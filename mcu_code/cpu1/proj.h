@@ -108,13 +108,25 @@ extern int16_t CH1_Iu_raw;
 extern int16_t CH1_Iv_raw;
 extern int16_t CH1_Iw_raw;
 
+extern int16_t CH1_Iu_raw2;
+extern int16_t CH1_Iv_raw2;
+extern int16_t CH1_Iw_raw2;
+
 extern float CH1_IGain;
+
+extern float CH1_IGain2;
 
 extern int16_t CH2_Udc_raw;
 extern int16_t CH2_Idc_raw;
 extern int16_t CH2_Iu_raw;
 extern int16_t CH2_Iv_raw;
 extern int16_t CH2_Iw_raw;
+
+extern int16_t CH2_Vu_raw;
+extern int16_t CH2_Vv_raw;
+extern int16_t CH2_Vw_raw;
+
+extern float CH2_VGain;
 
 extern uint16_t thetaEnco_raw;
 extern uint16_t thetaEnco_raw_offset;
@@ -139,12 +151,14 @@ extern float CH1_Udc_SI;
 extern float CH1_Idc_SI;
 
 extern struct Trans_struct CH1_Ifbk;
+extern struct Trans_struct CH1_Ifbk2;
 extern struct Trans_struct CH1_Ifilt;
 
 extern float CH2_Udc_SI;
 extern float CH2_Idc_SI;
 
 extern struct Trans_struct CH2_Ifbk;
+extern struct Trans_struct CH2_Vfbk;
 extern struct Trans_struct CH2_Ifilt;
 
 // 处理(滤波)后值
@@ -190,6 +204,10 @@ extern float CH1_Iu_raw_offset;
 extern float CH1_Iv_raw_offset;
 extern float CH1_Iw_raw_offset;
 extern float CH1_Idc_raw_offset;
+
+extern float CH1_Iu_raw_offset2;
+extern float CH1_Iv_raw_offset2;
+extern float CH1_Iw_raw_offset2;
 
 extern float CH2_Iu_raw_offset;
 extern float CH2_Iv_raw_offset;
