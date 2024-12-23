@@ -293,9 +293,7 @@ extern int16_t tempProtectFlg;
 
 // 观测主中断执行时间
 extern uint16_t isr_start_pwm_cnt;
+extern uint16_t isr_mid_pwm_cnt;
 extern uint16_t isr_end_pwm_cnt;
-
-extern uint16_t isr_start_pwm_cnt2;
-extern uint16_t isr_end_pwm_cnt2;
 
 #endif /* INCX_PROJ_H_ */

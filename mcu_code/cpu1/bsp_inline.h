@@ -192,16 +192,40 @@ static inline int16_t bsp_epwm_ch2_is_up_cnt()
 
 static inline void bsp_epwm_ch2_reg_set(struct SVPWM_struct* hSVPWM)
 {
-    EPwm4Regs.CMPA.bit.CMPA = __min(__max(hSVPWM->epwmU, 0), vPWM_LOAD_VAL_I);
-    EPwm5Regs.CMPA.bit.CMPA = __min(__max(hSVPWM->epwmV, 0), vPWM_LOAD_VAL_I);
-    EPwm6Regs.CMPA.bit.CMPA = __min(__max(hSVPWM->epwmW, 0), vPWM_LOAD_VAL_I);
+    // 由于控制频率翻倍，但单采单更，故可以从原始的结果上改
+    {
+        uint16_t cmpu = __min(__max(hSVPWM->epwmU, 0), vPWM_LOAD_VAL_I);
+        uint16_t cmpu_b = cmpu >> 1;
+        uint16_t cmpu_a = cmpu - cmpu_b;
+        EPwm4Regs.CMPA.bit.CMPA = cmpu_a;
+        EPwm4Regs.CMPB.bit.CMPB = cmpu_b;
+    }
+    {
+        uint16_t cmpv = __min(__max(hSVPWM->epwmV, 0), vPWM_LOAD_VAL_I);
+        uint16_t cmpv_b = cmpv >> 1;
+        uint16_t cmpv_a = cmpv - cmpv_b;
+        EPwm5Regs.CMPA.bit.CMPA = cmpv_a;
+        EPwm5Regs.CMPB.bit.CMPB = cmpv_b;
+    }
+    {
+        uint16_t cmpw = __min(__max(hSVPWM->epwmW, 0), vPWM_LOAD_VAL_I);
+        uint16_t cmpw_b = cmpw >> 1;
+        uint16_t cmpw_a = cmpw - cmpw_b;
+        EPwm6Regs.CMPA.bit.CMPA = cmpw_a;
+        EPwm6Regs.CMPB.bit.CMPB = cmpw_b;
+    }
 }
 
 static inline void bsp_epwm_ch2_reg_init()
 {
-    EPwm4Regs.CMPA.bit.CMPA = vPWM_CMP_DEFAILT_VAL_I;
-    EPwm5Regs.CMPA.bit.CMPA = vPWM_CMP_DEFAILT_VAL_I;
-    EPwm6Regs.CMPA.bit.CMPA = vPWM_CMP_DEFAILT_VAL_I;
+    // 由于控制频率翻倍但单采单更，故可以从ch1的结果上改
+    int16_t new_cmp_val = vPWM_CMP_DEFAILT_VAL_I >> 1;
+    EPwm4Regs.CMPA.bit.CMPA = new_cmp_val;
+    EPwm4Regs.CMPB.bit.CMPB = new_cmp_val;
+    EPwm5Regs.CMPA.bit.CMPA = new_cmp_val;
+    EPwm5Regs.CMPB.bit.CMPB = new_cmp_val;
+    EPwm6Regs.CMPA.bit.CMPA = new_cmp_val;
+    EPwm6Regs.CMPB.bit.CMPB = new_cmp_val;
 }
 
 static inline void bsp_epwm_ch2_on()

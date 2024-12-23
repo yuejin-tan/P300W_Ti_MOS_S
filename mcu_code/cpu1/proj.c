@@ -304,8 +304,9 @@ float db_cmp_tick = MATLAB_PARA_tick_db_comp;
 float db_cmp_vds = MATLAB_PARA_Vdf + MATLAB_PARA_Vsat;
 
 int16_t CH2_ext_fcn = 0;
-float db2_Ithd_1 = 1.0f / MATLAB_PARA_db_Ithd;
-float db2_cmp_tick = 100;
+float db2_Ithd_1 = 20;
+// 注意，由于ch2是强行兼容的，故死区补偿的参数需*2
+float db2_cmp_tick = 250;
 float db2_cmp_vds = 0.05f + 0.05f;
 
 int16_t speed_mode = 0;
@@ -430,7 +431,7 @@ static void cfg_clk_util(uint16_t pwm_freq)
     PIctrl_Iloop_cfg(&CH1_IqPI, MATLAB_PARA_Iloop_bw_factor, MATLAB_PARA_Lq, MATLAB_PARA_Rall, MATLAB_PARA_Upi_max, -MATLAB_PARA_Upi_max);
 
     // 对拖机器，懒得修改matlab脚本了，参数放在 bsp_cfg.h 里
-
+    // ch2 由于控制频率翻倍但单采单更，因此该部分计算仍可套用CH1的
     LPF_Ord1_2_cfg(&CH2_IdFilt, LPF_ORD_2_t, vCTRL_TS, vCTRL_FREQ * MATLAB_PARA_Idq_filter_factor, MATLAB_PARA_Idq_filter_yita);
     LPF_Ord1_2_cfg(&CH2_IqFilt, LPF_ORD_2_t, vCTRL_TS, vCTRL_FREQ * MATLAB_PARA_Idq_filter_factor, MATLAB_PARA_Idq_filter_yita);
     LPF_Ord1_2_cfg(&CH2_I0Filt, LPF_ORD_2_t, vCTRL_TS, vCTRL_FREQ * MATLAB_PARA_Idq_filter_factor, MATLAB_PARA_Idq_filter_yita);
@@ -948,18 +949,9 @@ static inline void curLoopTask2()
         if (CH2_ext_fcn & 0x4u)
         {
             // 死区补偿 part2
-#if MATLAB_PARA_ctrl_freq_mul == 2
-            if (bsp_epwm_ch2_is_up_cnt())
-            {
-                dbComp2_down(&CH2_svpwm, &CH2_Ifilt, db2_Ithd_1, db2_cmp_tick);
-            }
-            else
-            {
-                dbComp2_up(&CH2_svpwm, &CH2_Ifilt, db2_Ithd_1, db2_cmp_tick);
-            }
-#else
+            // 此处的 MATLAB_PARA_ctrl_freq_mul = 1 !!!
+            // 注意这里是单采单更的，与MATLAB指令并不一致
             dbComp2_all(&CH2_svpwm, &CH2_Ifilt, db2_Ithd_1, db2_cmp_tick);
-#endif
         }
         bsp_epwm_ch2_reg_set(&CH2_svpwm);
         bsp_epwm_ch2_on();

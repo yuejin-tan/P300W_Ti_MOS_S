@@ -399,6 +399,106 @@ static void cfg_epwm_1pha(volatile struct EPWM_REGS* EPwmxRegs, int syncMode)
     return;
 }
 
+// 针对drv8305对拖平台的配置
+static void cfg_epwm_1pha2(volatile struct EPWM_REGS* EPwmxRegs)
+{
+    // 配置时基模块
+    EPwmxRegs->TBPRD = vPWM_LOAD_VAL_I / 2;
+    EPwmxRegs->TBPHS.bit.TBPHS = 0x0;
+    EPwmxRegs->TBCTR = 0x0;
+    EPwmxRegs->TBCTL.bit.FREE_SOFT = 0;
+    EPwmxRegs->TBCTL.bit.PHSDIR = TB_UP;
+    EPwmxRegs->TBCTL.bit.CLKDIV = TB_DIV1;
+    EPwmxRegs->TBCTL.bit.HSPCLKDIV = TB_DIV1;
+    EPwmxRegs->TBCTL.bit.SWFSYNC = 0;
+    EPwmxRegs->TBCTL.bit.SYNCOSEL = TB_SYNC_IN;
+    EPwmxRegs->TBCTL.bit.PRDLD = TB_SHADOW;
+    EPwmxRegs->TBCTL.bit.PHSEN = TB_ENABLE;
+    EPwmxRegs->TBCTL.bit.CTRMODE = TB_COUNT_UPDOWN;
+
+    EPwmxRegs->TBCTL2.bit.PRDLDSYNC = 1;
+    EPwmxRegs->TBCTL2.bit.SYNCOSELX = 0;
+
+    // EPwmxRegs->TBSTS 状态读取寄存器，不用配置
+
+    EPwmxRegs->CMPA.bit.CMPA = vPWM_CMP_DEFAILT_VAL_I / 2;
+    EPwmxRegs->CMPB.bit.CMPB = vPWM_CMP_DEFAILT_VAL_I / 2;
+
+    EPwmxRegs->CMPCTL.bit.SHDWAMODE = CC_SHADOW;
+    EPwmxRegs->CMPCTL.bit.SHDWBMODE = CC_SHADOW;
+
+    // 单采
+    EPwmxRegs->CMPCTL.bit.LOADAMODE = CC_CTR_ZERO;
+    EPwmxRegs->CMPCTL.bit.LOADBMODE = CC_CTR_ZERO;
+    EPwmxRegs->CMPCTL2.bit.LOADCMODE = CC_CTR_ZERO;
+    EPwmxRegs->CMPCTL2.bit.LOADDMODE = CC_CTR_ZERO;
+
+    // 不使用预装载
+    EPwmxRegs->AQCTL.all = 0;
+    // 装载信号选择也不必考虑
+    EPwmxRegs->AQTSRCSEL.all = 0;
+
+    // 注意，为增强分辨率，是用的CAU和CBD，以实现不对称边沿
+    // 所以A、B都需要配置
+    EPwmxRegs->AQCTLA.all = 0;
+    EPwmxRegs->AQCTLA.bit.CAU = AQ_SET;
+    EPwmxRegs->AQCTLA.bit.CBD = AQ_CLEAR;
+    // 无需用高级触发
+    EPwmxRegs->AQCTLA2.all = 0;
+
+    EPwmxRegs->AQCTLB.all = 0;
+    EPwmxRegs->AQCTLB.bit.CAU = AQ_SET;
+    EPwmxRegs->AQCTLB.bit.CBD = AQ_CLEAR;
+    // 无需用高级触发
+    EPwmxRegs->AQCTLB2.all = 0;
+
+    EPwmxRegs->AQSFRC.bit.RLDCSF = 3; // 不使用shadow
+    EPwmxRegs->AQSFRC.bit.ACTSFA = AQ_CLEAR;
+    EPwmxRegs->AQSFRC.bit.ACTSFB = AQ_SET;
+
+#define TYJ_AQSFRC_LOW 0b01
+#define TYJ_AQSFRC_HIGH 0b10
+
+    // 先关闭IGBT
+    EPwmxRegs->AQCSFRC.bit.CSFA = TYJ_AQSFRC_LOW;
+    EPwmxRegs->AQCSFRC.bit.CSFB = TYJ_AQSFRC_HIGH;
+
+#define TYJ_DB_LOAD_ZERO 0
+#define TYJ_DB_LOAD_PRD 1
+#define TYJ_DB_LOAD_ZERO_PRD 2
+#define TYJ_DB_LOAD_FREEZE 3
+
+    // EPwmxRegs->DBxx
+    EPwmxRegs->DBCTL.bit.HALFCYCLE = 0;
+    EPwmxRegs->DBCTL.bit.DEDB_MODE = 0;
+    EPwmxRegs->DBCTL.bit.OUTSWAP = 0;
+    EPwmxRegs->DBCTL.bit.SHDWDBFEDMODE = 0;
+    EPwmxRegs->DBCTL.bit.SHDWDBREDMODE = 0;
+    EPwmxRegs->DBCTL.bit.LOADFEDMODE = TYJ_DB_LOAD_ZERO_PRD;
+    EPwmxRegs->DBCTL.bit.LOADREDMODE = TYJ_DB_LOAD_ZERO_PRD;
+    EPwmxRegs->DBCTL.bit.IN_MODE = DBA_RED_DBB_FED;
+
+    // DRV8305 高有效，闲鱼IGBT也定义为高有效
+    EPwmxRegs->DBCTL.bit.POLSEL = DB_ACTV_HIC;
+
+    EPwmxRegs->DBCTL.bit.OUT_MODE = DB_FULL_ENABLE;
+    EPwmxRegs->DBCTL2.bit.SHDWDBCTLMODE = 0;
+    EPwmxRegs->DBCTL2.bit.LOADDBCTLMODE = TYJ_DB_LOAD_ZERO_PRD;
+    // 死区时间配置，定死1us，不随simulink变化
+    EPwmxRegs->DBRED.bit.DBRED = 100;
+    EPwmxRegs->DBFED.bit.DBFED = 100;
+
+    // GLD与EPWMXLINK不用
+
+    // EPwm6Regs.PCCTL
+    // 斩波模块不用
+
+    // EPwmxRegs->TZ ，该硬件板硬件保护电路有误，暂不使用
+
+    // EPwmxRegs->ETxx ，在外部配置，配置1相即可
+    return;
+}
+
 static void init_ePWM()
 {
 
@@ -424,30 +524,25 @@ static void init_ePWM()
     cfg_epwm_1pha(&EPwm2Regs, 1);
     cfg_epwm_1pha(&EPwm3Regs, 1);
 
-    cfg_epwm_1pha(&EPwm4Regs, 1);
-    cfg_epwm_1pha(&EPwm5Regs, 1);
-    cfg_epwm_1pha(&EPwm6Regs, 1);
-
-    // 补丁：ch2 MOS 的死区时间为1us
-    EPwm4Regs.DBRED.bit.DBRED = 100;
-    EPwm4Regs.DBFED.bit.DBFED = 100;
-    EPwm5Regs.DBRED.bit.DBRED = 100;
-    EPwm5Regs.DBFED.bit.DBFED = 100;
-    EPwm6Regs.DBRED.bit.DBRED = 100;
-    EPwm6Regs.DBFED.bit.DBFED = 100;
+    // 对拖平台
+    cfg_epwm_1pha2(&EPwm4Regs);
+    cfg_epwm_1pha2(&EPwm5Regs);
+    cfg_epwm_1pha2(&EPwm6Regs);
 
     // epwm7 用于计算CPU1的中断时间
     cfg_epwm_1pha(&EPwm7Regs, 1);
     // epwm8 输出PWM情况
     cfg_epwm_1pha(&EPwm8Regs, 1);
+    // 配置输出
     EPwm8Regs.CMPA.bit.CMPA = PWM_DEADBAND_TICKS;
     EPwm8Regs.AQCSFRC.bit.CSFA = 0;
     EPwm8Regs.AQCSFRC.bit.CSFB = 0;
 
-    // 配置EPWM触发ADC事件
-    // 在CH1的a相上，只在数到零时触发
-    // 由于CH1是HALL电流采样，故在波峰触发也没啥问题，偷懒就不改移相角了
-    // 该版程序实际上不支持灵活切换双采样了，但其实无伤大雅，摆烂了
+    // 配置EPWM触发ADC事件，ch2频率恒为ch1两倍，但下桥臂电阻采样只能单更单采，故可以共用
+    // 实际上该程序已不支持灵活切换单采、双采了
+#if MATLAB_PARA_ctrl_freq_mul != 2
+#error "该版程序只能双采双更"
+#endif
     {
         volatile struct EPWM_REGS* EPwmxRegs = &EPwm1Regs;
         EPwmxRegs->ETSEL.all = 0;
@@ -457,23 +552,6 @@ static void init_ePWM()
         EPwmxRegs->ETSEL.bit.SOCASEL = ET_CTR_PRDZERO;
 #else
         EPwmxRegs->ETSEL.bit.SOCASEL = ET_CTR_PRD;
-#endif
-
-        EPwmxRegs->ETPS.all = 0;
-        EPwmxRegs->ETPS.bit.SOCAPRD = 1;
-        // 无需使用高级特性
-    }
-
-    // 在CH2的a相上，只在数到零时触发
-    {
-        volatile struct EPWM_REGS* EPwmxRegs = &EPwm4Regs;
-        EPwmxRegs->ETSEL.all = 0;
-        EPwmxRegs->ETSEL.bit.SOCAEN = 1;
-
-#if MATLAB_PARA_ctrl_freq_mul == 2
-        EPwmxRegs->ETSEL.bit.SOCASEL = ET_CTR_PRDZERO;
-#else
-        EPwmxRegs->ETSEL.bit.SOCASEL = ET_CTR_ZERO;
 #endif
 
         EPwmxRegs->ETPS.all = 0;
@@ -570,15 +648,15 @@ static void init_adc_a()
 
     AdcaRegs.ADCSOC0CTL.bit.CHSEL = 4;   // ch2 Ic
     AdcaRegs.ADCSOC0CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
-    AdcaRegs.ADCSOC0CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
+    AdcaRegs.ADCSOC0CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
 
     AdcaRegs.ADCSOC1CTL.bit.CHSEL = 15;  // ch2 Va
     AdcaRegs.ADCSOC1CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
-    AdcaRegs.ADCSOC1CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
+    AdcaRegs.ADCSOC1CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
 
     AdcaRegs.ADCSOC2CTL.bit.CHSEL = 5;   // ch2 Udc
     AdcaRegs.ADCSOC2CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
-    AdcaRegs.ADCSOC2CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
+    AdcaRegs.ADCSOC2CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
 
     AdcaRegs.ADCSOC3CTL.bit.CHSEL = 3;   // ch1 Ia
     AdcaRegs.ADCSOC3CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
@@ -606,11 +684,11 @@ static void init_adc_b()
 
     AdcbRegs.ADCSOC0CTL.bit.CHSEL = 4;   // ch2 Ib
     AdcbRegs.ADCSOC0CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
-    AdcbRegs.ADCSOC0CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
+    AdcbRegs.ADCSOC0CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
 
     AdcbRegs.ADCSOC1CTL.bit.CHSEL = 5;   // ch2 Vc
     AdcbRegs.ADCSOC1CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
-    AdcbRegs.ADCSOC1CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
+    AdcbRegs.ADCSOC1CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
 
     AdcbRegs.ADCSOC2CTL.bit.CHSEL = 3;   // ch1 Ib
     AdcbRegs.ADCSOC2CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
@@ -624,9 +702,10 @@ static void init_adc_b()
     AdcbRegs.ADCSOC4CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
     AdcbRegs.ADCSOC4CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
 
-    AdcbRegs.ADCINTSEL1N2.bit.INT1SEL = 4;  //end of SOC4 will set INT1 flag
-    AdcbRegs.ADCINTSEL1N2.bit.INT1CONT = 1; //允许重复中断
-    AdcbRegs.ADCINTSEL1N2.bit.INT1E = 1;    //enable INT1 flag
+    // 两通道共用中断
+    // AdcbRegs.ADCINTSEL1N2.bit.INT1SEL = 4;  //end of SOC4 will set INT1 flag
+    // AdcbRegs.ADCINTSEL1N2.bit.INT1CONT = 1; //允许重复中断
+    // AdcbRegs.ADCINTSEL1N2.bit.INT1E = 1;    //enable INT1 flag
     EDIS;
 
     AdcbRegs.ADCINTFLGCLR.bit.ADCINT1 = 1; //clear INT1 flag
@@ -642,11 +721,11 @@ static void init_adc_c()
 
     AdccRegs.ADCSOC0CTL.bit.CHSEL = 4;   // ch2 Ia
     AdccRegs.ADCSOC0CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
-    AdccRegs.ADCSOC0CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
+    AdccRegs.ADCSOC0CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
 
     AdccRegs.ADCSOC1CTL.bit.CHSEL = 5;   // ch2 Vb
     AdccRegs.ADCSOC1CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
-    AdccRegs.ADCSOC1CTL.bit.TRIGSEL = 11; //trigger on ePWM4 SOCA/C
+    AdccRegs.ADCSOC1CTL.bit.TRIGSEL = 5; //trigger on ePWM1 SOCA/C
 
     AdccRegs.ADCSOC2CTL.bit.CHSEL = 3;   // ch1 Ic
     AdccRegs.ADCSOC2CTL.bit.ACQPS = ADC_SAMP_TICKS;  //sample time
@@ -916,7 +995,7 @@ void bsp_interrupt_cfg()
     EALLOW;
     PieVectTable.ADCA1_INT = &adca1_isr; //function for ADCA interrupt 1
 
-    PieVectTable.ADCB1_INT = &adcb1_isr; //function for ADCB interrupt 1
+    // PieVectTable.ADCB1_INT = &adcb1_isr; //function for ADCB interrupt 1
     EDIS;
 
     //Enable group 1 interrupts
@@ -924,7 +1003,7 @@ void bsp_interrupt_cfg()
 
     // enable PIE interrupt
     PieCtrlRegs.PIEIER1.bit.INTx1 = 1;
-    PieCtrlRegs.PIEIER1.bit.INTx2 = 1;
+    // PieCtrlRegs.PIEIER1.bit.INTx2 = 1;
 
     // Enables PIE to drive a pulse into the CPU
     PieCtrlRegs.PIEACK.all = 0xFFFF;
