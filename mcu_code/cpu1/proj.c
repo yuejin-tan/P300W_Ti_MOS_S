@@ -187,6 +187,8 @@ int16_t CH2_Iu_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 int16_t CH2_Iv_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 int16_t CH2_Iw_raw = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 
+int16_t CH2_samp_lThd = 200;
+
 int16_t CH2_Vu_raw = 0;
 int16_t CH2_Vv_raw = 0;
 int16_t CH2_Vw_raw = 0;
@@ -645,7 +647,51 @@ static inline void sigSampTask2()
         break;
     }
 
-    // 电流变换
+    // 电流变换，由于是下桥臂电阻采样，时间太短的000矢量将使采样失真，故结合上周期的发波情况进行补偿
+    // 由于涉及到过调制等麻烦事，就不改调制算法了，先凑合用
+    if (CH2_svpwm.epwmU < CH2_svpwm.epwmV)
+    {
+        if (CH2_svpwm.epwmU < CH2_svpwm.epwmW)
+        {
+            // u最小
+            if (CH2_svpwm.epwmU < CH2_samp_lThd)
+            {
+                // 插补通道，但沿用零序偏移信息
+                transX_vw02u(&CH2_Ifbk);
+            }
+        }
+        else
+        {
+            // w最小
+            if (CH2_svpwm.epwmW < CH2_samp_lThd)
+            {
+                // 插补通道，但沿用零序偏移信息
+                transX_uv02w(&CH2_Ifbk);
+            }
+        }
+    }
+    else
+    {
+        if (CH2_svpwm.epwmV < CH2_svpwm.epwmW)
+        {
+            // v最小
+            if (CH2_svpwm.epwmV < CH2_samp_lThd)
+            {
+                // 插补通道，但沿用零序偏移信息
+                transX_uw02v(&CH2_Ifbk);
+            }
+        }
+        else
+        {
+            // w最小
+            if (CH2_svpwm.epwmW < CH2_samp_lThd)
+            {
+                // 插补通道，但沿用零序偏移信息
+                transX_uv02w(&CH2_Ifbk);
+            }
+        }
+    }
+
     trans3_uvw2dq0(&CH2_Ifbk, &CH2_thetaI);
     CH2_Ifilt.d = LPF_Ord2_update(&CH2_IdFilt, CH2_Ifbk.d);
     CH2_Ifilt.q = LPF_Ord2_update(&CH2_IqFilt, CH2_Ifbk.q);
@@ -896,6 +942,8 @@ static inline void curLoopTask()
         PIctrl_setIntg(&CH1_IdPI, 0);
         PIctrl_setIntg(&CH1_IqPI, 0);
         // 归零电压
+        trans2_dq2albe(&CH1_Utar, &CH1_thetaU);
+        SVPWM_init(&CH1_svpwm, CH1_Udc);
         bsp_epwm_ch1_reg_init();
 
     case CM_error:
@@ -970,6 +1018,8 @@ static inline void curLoopTask2()
         PIctrl_setIntg(&CH2_IdPI, 0);
         PIctrl_setIntg(&CH2_IqPI, 0);
         // 归零电压
+        trans2_dq2albe(&CH2_Utar, &CH2_thetaU);
+        SVPWM_init(&CH2_svpwm, CH2_Udc);
         bsp_epwm_ch2_reg_init();
 
     case CM_error:

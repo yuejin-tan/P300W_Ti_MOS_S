@@ -122,6 +122,8 @@ extern int16_t CH2_Iu_raw;
 extern int16_t CH2_Iv_raw;
 extern int16_t CH2_Iw_raw;
 
+extern int16_t CH2_samp_lThd;
+
 extern int16_t CH2_Vu_raw;
 extern int16_t CH2_Vv_raw;
 extern int16_t CH2_Vw_raw;
