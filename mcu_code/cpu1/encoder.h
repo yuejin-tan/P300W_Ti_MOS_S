@@ -12,8 +12,11 @@
 #include "stdint.h"
 #include "math.h"
 
-#define EQEP_TYJDEV_REGS EQep2Regs
-#define EQEP_TYJDEV_BASE EQEP2_BASE
+#define EQEP_TYJDEV_REGS1 EQep1Regs
+#define EQEP_TYJDEV_BASE1 EQEP1_BASE
+
+#define EQEP_TYJDEV_REGS2 EQep2Regs
+#define EQEP_TYJDEV_BASE2 EQEP2_BASE
 
 struct encoder_struct {
     float raw2u16_ratio;

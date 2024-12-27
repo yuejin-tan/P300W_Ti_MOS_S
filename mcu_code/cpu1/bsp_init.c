@@ -762,6 +762,63 @@ static void init_adc_d()
     return;
 }
 
+static void init_eqep1(int ifInvQaQb)
+{
+    // 设置时钟
+    EALLOW;
+    CpuSysRegs.PCLKCR4.bit.EQEP1 = 1;
+    EDIS;
+
+    // gpio cfg 
+    // no pull, qual 6, mux to eqep
+    EALLOW;
+    GpioCtrlRegs.GPAPUD.bit.GPIO20 = 1;
+    GpioCtrlRegs.GPAPUD.bit.GPIO21 = 1;
+    GpioCtrlRegs.GPDPUD.bit.GPIO99 = 1;
+    GpioCtrlRegs.GPAQSEL2.bit.GPIO20 = 2;
+    GpioCtrlRegs.GPAQSEL2.bit.GPIO21 = 2;
+    GpioCtrlRegs.GPDQSEL1.bit.GPIO99 = 2;
+    GpioCtrlRegs.GPAMUX2.bit.GPIO20 = 1;
+    GpioCtrlRegs.GPAMUX2.bit.GPIO21 = 1;
+    GpioCtrlRegs.GPDMUX1.bit.GPIO99 = 1;
+    GpioCtrlRegs.GPAGMUX2.bit.GPIO20 = 0;
+    GpioCtrlRegs.GPAGMUX2.bit.GPIO21 = 0;
+    GpioCtrlRegs.GPDGMUX1.bit.GPIO99 = 1;
+    EDIS;
+
+    // Sets the polarity of the eQEP module's input signals.
+    EQEP_setInputPolarity(EQEP_TYJDEV_BASE1, true, true, true, false);
+    // Configures eQEP module's quadrature decoder unit.
+    if (ifInvQaQb)
+        EQEP_setDecoderConfig(EQEP_TYJDEV_BASE1, (EQEP_CONFIG_QUADRATURE | EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_SWAP | EQEP_CONFIG_IGATE_DISABLE));
+    else
+        EQEP_setDecoderConfig(EQEP_TYJDEV_BASE1, (EQEP_CONFIG_QUADRATURE | EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_NO_SWAP | EQEP_CONFIG_IGATE_DISABLE));
+    // Set the emulation mode of the eQEP module.
+    EQEP_setEmulationMode(EQEP_TYJDEV_BASE1, EQEP_EMULATIONMODE_RUNFREE);
+    // Configures eQEP module position counter unit.
+    EQEP_setPositionCounterConfig(EQEP_TYJDEV_BASE1, EQEP_POSITION_RESET_IDX, ENCO_PPR1 * 4 - 1);
+    // Sets the current encoder position.
+    EQEP_setPosition(EQEP_TYJDEV_BASE1, 0U);
+    // Disables the eQEP module unit timer.
+    EQEP_disableUnitTimer(EQEP_TYJDEV_BASE1);
+    // Disables the eQEP module watchdog timer.
+    EQEP_disableWatchdog(EQEP_TYJDEV_BASE1);
+    // Configures the quadrature modes in which the position count can be latched.
+    EQEP_setLatchMode(EQEP_TYJDEV_BASE1, (EQEP_LATCH_CNT_READ_BY_CPU | EQEP_LATCH_RISING_STROBE | EQEP_LATCH_FALLING_INDEX));
+    // Configures the mode in which the position counter is initialized.
+    EQEP_setPositionInitMode(EQEP_TYJDEV_BASE1, (EQEP_INIT_DO_NOTHING));
+    // Sets the software initialization of the encoder position counter.
+    EQEP_setSWPositionInit(EQEP_TYJDEV_BASE1, false);
+    // Sets the init value for the encoder position counter.
+    EQEP_setInitialPosition(EQEP_TYJDEV_BASE1, 0U);
+    // Enables the eQEP module.
+    EQEP_enableModule(EQEP_TYJDEV_BASE1);
+    // Configures eQEP module edge-capture unit.
+    EQEP_setCaptureConfig(EQEP_TYJDEV_BASE1, EQEP_CAPTURE_CLK_DIV_1, EQEP_UNIT_POS_EVNT_DIV_4);
+    // Enables the eQEP module edge-capture unit.
+    EQEP_enableCapture(EQEP_TYJDEV_BASE1);
+}
+
 static void init_eqep2(int ifInvQaQb)
 {
     // 设置时钟
@@ -787,36 +844,36 @@ static void init_eqep2(int ifInvQaQb)
     EDIS;
 
     // Sets the polarity of the eQEP module's input signals.
-    EQEP_setInputPolarity(EQEP_TYJDEV_BASE, true, true, true, false);
+    EQEP_setInputPolarity(EQEP_TYJDEV_BASE2, true, true, true, false);
     // Configures eQEP module's quadrature decoder unit.
     if (ifInvQaQb)
-        EQEP_setDecoderConfig(EQEP_TYJDEV_BASE, (EQEP_CONFIG_QUADRATURE | EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_SWAP | EQEP_CONFIG_IGATE_DISABLE));
+        EQEP_setDecoderConfig(EQEP_TYJDEV_BASE2, (EQEP_CONFIG_QUADRATURE | EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_SWAP | EQEP_CONFIG_IGATE_DISABLE));
     else
-        EQEP_setDecoderConfig(EQEP_TYJDEV_BASE, (EQEP_CONFIG_QUADRATURE | EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_NO_SWAP | EQEP_CONFIG_IGATE_DISABLE));
+        EQEP_setDecoderConfig(EQEP_TYJDEV_BASE2, (EQEP_CONFIG_QUADRATURE | EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_NO_SWAP | EQEP_CONFIG_IGATE_DISABLE));
     // Set the emulation mode of the eQEP module.
-    EQEP_setEmulationMode(EQEP_TYJDEV_BASE, EQEP_EMULATIONMODE_RUNFREE);
+    EQEP_setEmulationMode(EQEP_TYJDEV_BASE2, EQEP_EMULATIONMODE_RUNFREE);
     // Configures eQEP module position counter unit.
-    EQEP_setPositionCounterConfig(EQEP_TYJDEV_BASE, EQEP_POSITION_RESET_IDX, ENCO_PPR * 4 - 1);
+    EQEP_setPositionCounterConfig(EQEP_TYJDEV_BASE2, EQEP_POSITION_RESET_IDX, ENCO_PPR2 * 4 - 1);
     // Sets the current encoder position.
-    EQEP_setPosition(EQEP_TYJDEV_BASE, 0U);
+    EQEP_setPosition(EQEP_TYJDEV_BASE2, 0U);
     // Disables the eQEP module unit timer.
-    EQEP_disableUnitTimer(EQEP_TYJDEV_BASE);
+    EQEP_disableUnitTimer(EQEP_TYJDEV_BASE2);
     // Disables the eQEP module watchdog timer.
-    EQEP_disableWatchdog(EQEP_TYJDEV_BASE);
+    EQEP_disableWatchdog(EQEP_TYJDEV_BASE2);
     // Configures the quadrature modes in which the position count can be latched.
-    EQEP_setLatchMode(EQEP_TYJDEV_BASE, (EQEP_LATCH_CNT_READ_BY_CPU | EQEP_LATCH_RISING_STROBE | EQEP_LATCH_FALLING_INDEX));
+    EQEP_setLatchMode(EQEP_TYJDEV_BASE2, (EQEP_LATCH_CNT_READ_BY_CPU | EQEP_LATCH_RISING_STROBE | EQEP_LATCH_FALLING_INDEX));
     // Configures the mode in which the position counter is initialized.
-    EQEP_setPositionInitMode(EQEP_TYJDEV_BASE, (EQEP_INIT_DO_NOTHING));
+    EQEP_setPositionInitMode(EQEP_TYJDEV_BASE2, (EQEP_INIT_DO_NOTHING));
     // Sets the software initialization of the encoder position counter.
-    EQEP_setSWPositionInit(EQEP_TYJDEV_BASE, false);
+    EQEP_setSWPositionInit(EQEP_TYJDEV_BASE2, false);
     // Sets the init value for the encoder position counter.
-    EQEP_setInitialPosition(EQEP_TYJDEV_BASE, 0U);
+    EQEP_setInitialPosition(EQEP_TYJDEV_BASE2, 0U);
     // Enables the eQEP module.
-    EQEP_enableModule(EQEP_TYJDEV_BASE);
+    EQEP_enableModule(EQEP_TYJDEV_BASE2);
     // Configures eQEP module edge-capture unit.
-    EQEP_setCaptureConfig(EQEP_TYJDEV_BASE, EQEP_CAPTURE_CLK_DIV_1, EQEP_UNIT_POS_EVNT_DIV_4);
+    EQEP_setCaptureConfig(EQEP_TYJDEV_BASE2, EQEP_CAPTURE_CLK_DIV_1, EQEP_UNIT_POS_EVNT_DIV_4);
     // Enables the eQEP module edge-capture unit.
-    EQEP_enableCapture(EQEP_TYJDEV_BASE);
+    EQEP_enableCapture(EQEP_TYJDEV_BASE2);
 }
 
 static void init_board_gpio()
@@ -917,6 +974,7 @@ void bsp_init_chip_devs()
     init_adc_c();
     init_adc_d();
     init_cpu_timers();
+    init_eqep1(0);
     init_eqep2(1);
 
     return;

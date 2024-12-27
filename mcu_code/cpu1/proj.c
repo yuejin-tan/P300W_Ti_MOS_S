@@ -109,6 +109,7 @@ struct OECA_struct OECA1;
 struct LPF_Ord1_2_struct OECA_f1;
 
 struct encoder_struct encoder1;
+struct encoder_struct encoder2;
 struct DRV8305_struct drv8305_1;
 
 enum ANGLE_MODE
@@ -196,10 +197,10 @@ int16_t CH2_Vw_raw = 0;
 float CH2_VGain = 1.0 / 4095.0 * 3.0 / 5.0 * (5.0 + 62.0);
 
 uint16_t thetaEnco_raw = 0;
-uint16_t thetaEnco_raw_offset = 15850;
+uint16_t thetaEnco_raw_offset = 10500;
 
 uint16_t thetaEnco_raw2 = 0;
-uint16_t thetaEnco_raw_offset2 = 13400;
+uint16_t thetaEnco_raw_offset2 = 2100;
 
 int32_t NTC_raw = 0;
 int32_t NTC_ref_raw = 0;
@@ -306,9 +307,9 @@ float db_cmp_tick = MATLAB_PARA_tick_db_comp;
 float db_cmp_vds = MATLAB_PARA_Vdf + MATLAB_PARA_Vsat;
 
 int16_t CH2_ext_fcn = 0;
-float db2_Ithd_1 = 20;
+float db2_Ithd_1 = 10;
 // 注意，由于ch2是强行兼容的，故死区补偿的参数需*2
-float db2_cmp_tick = 250;
+float db2_cmp_tick = 200;
 float db2_cmp_vds = 0.05f + 0.05f;
 
 int16_t speed_mode = 0;
@@ -495,7 +496,8 @@ void ctrl_init()
     Goertz_init(&Goertz1, 1, OECA1.sweepMax);
     Goertz_init(&Goertz2, 2, OECA1.sweepMax);
 
-    encoder_init(&encoder1, ENCO_PPR);
+    encoder_init(&encoder1, ENCO_PPR1);
+    encoder_init(&encoder2, ENCO_PPR2);
 }
 
 // 两个功率部分参数不一，懒得修改matlab脚本了
@@ -512,8 +514,8 @@ static inline float getCurSI_2(int16_t adcVal, float offset)
 static inline void sigSampTask()
 {
     // 摆烂没有使用DMA或CLA来读取 eqep, 故需尽早访问寄存器, 以保持延迟一致性
-    thetaEnco_raw = encoder_u16Read(&encoder1, EQEP_TYJDEV_REGS.QPOSCNT);
-    spdEnco = encoder_lowSpdCalc(&encoder1, EQEP_TYJDEV_REGS.QCPRDLAT);
+    thetaEnco_raw = encoder_u16Read(&encoder1, EQEP_TYJDEV_REGS1.QPOSCNT);
+    spdEnco = encoder_lowSpdCalc(&encoder1, EQEP_TYJDEV_REGS1.QCPRDLAT);
 
     // ADC signals
     CH1_Iu_raw = bsp_get_CH1_Iu_adcRaw();
@@ -588,8 +590,8 @@ static inline void sigSampTask()
 static inline void sigSampTask2()
 {
     // 摆烂没有使用DMA或CLA来读取 eqep, 故需尽早访问寄存器, 以保持延迟一致性
-    thetaEnco_raw2 = encoder_u16Read(&encoder1, EQEP_TYJDEV_REGS.QPOSCNT);
-    spdEnco2 = encoder_lowSpdCalc(&encoder1, EQEP_TYJDEV_REGS.QCPRDLAT);
+    thetaEnco_raw2 = encoder_u16Read(&encoder2, EQEP_TYJDEV_REGS2.QPOSCNT);
+    spdEnco2 = encoder_lowSpdCalc(&encoder2, EQEP_TYJDEV_REGS2.QCPRDLAT);
 
     // ADC signals
     CH2_Iu_raw = bsp_get_CH2_Iu_adcRaw();

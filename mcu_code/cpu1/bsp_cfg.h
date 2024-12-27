@@ -17,7 +17,7 @@
 #define PWM_DEADBAND_TICKS (MATLAB_PARA_tick_dead)
 
 // 母线电压
-#define UDC_INIT_VAL (24)
+#define UDC_INIT_VAL (27.5)
 
 // 保护参数设置
 // 电流保护
@@ -39,16 +39,16 @@
 #define CUR_PRCT_FOLW_INTG_MAX2 (CUR_PRCT_FOLW_DMAX2 * 0.01)
 
 // 转速保护
-#define SPD_PRCT_THD_L (-2500.0 / 60.0 * 2.0 * M_PI)
-#define SPD_PRCT_THD_H (2500.0 / 60.0 * 2.0 * M_PI)
+#define SPD_PRCT_THD_L (-3300.0 / 60.0 * 2.0 * M_PI)
+#define SPD_PRCT_THD_H (3300.0 / 60.0 * 2.0 * M_PI)
 #define SPD_PRCT_INTG_BASE_UTIL (0)
 #define SPD_PRCT_INTG_BASE (SPD_PRCT_INTG_BASE_UTIL * SPD_PRCT_INTG_BASE_UTIL)
 #define SPD_PRCT_INTG_MAX (0)
 #define SPD_PRCT_FOLW_DMAX (200.0)
 #define SPD_PRCT_FOLW_INTG_MAX (SPD_PRCT_FOLW_DMAX * 0.1)
 // 电压保护
-#define UDC_PRCT_THD_L (-3.0)
-#define UDC_PRCT_THD_H (33.0)
+#define UDC_PRCT_THD_L (5.0)
+#define UDC_PRCT_THD_H (32.0)
 #define UDC_PRCT_INTG_BASE_UTIL (0)
 #define UDC_PRCT_INTG_BASE (UDC_PRCT_INTG_BASE_UTIL * UDC_PRCT_INTG_BASE_UTIL)
 #define UDC_PRCT_INTG_MAX (0)
@@ -64,7 +64,8 @@
 #define TEMP_PRCT_FOLW_INTG_MAX (0)
 
 // eqep
-#define ENCO_PPR (2500)
+#define ENCO_PPR1 (2500)
+#define ENCO_PPR2 (2500)
 
 // 对拖机器
 #define DYNO_PARA_RDC2ELE_RATIO 4

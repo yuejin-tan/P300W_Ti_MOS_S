@@ -16,10 +16,10 @@
 #define MATLAB_PARA_RDC2ELE_RATIO 4
 #define MATLAB_PARA_MOTOR2RDC_RATIO 1
 #define MATLAB_PARA_C_dclink 0.000900
-#define MATLAB_PARA_Ld 0.000200
-#define MATLAB_PARA_Lq 0.000300
-#define MATLAB_PARA_Rall 0.750000
-#define MATLAB_PARA_faif 0.017200
+#define MATLAB_PARA_Ld 0.000130
+#define MATLAB_PARA_Lq 0.000130
+#define MATLAB_PARA_Rall 0.300000
+#define MATLAB_PARA_faif 0.008000
 #define MATLAB_PARA_p0 4
 #define MATLAB_PARA_Ron 0.050000
 #define MATLAB_PARA_Vsat 0.800000
@@ -29,8 +29,8 @@
 #define MATLAB_PARA_tick_dead 200.000000
 #define MATLAB_PARA_tick_db_comp 200.000000
 #define MATLAB_PARA_db_Ithd 0.100000
-#define MATLAB_PARA_kp_wloop 0.009533
-#define MATLAB_PARA_ki_wloop 0.127111
+#define MATLAB_PARA_kp_wloop 0.007333
+#define MATLAB_PARA_ki_wloop 0.097778
 #define MATLAB_PARA_Wpi_max 2.000000
 #define MATLAB_PARA_Wpi_min -2.000000
 #define MATLAB_PARA_kp_vloop 305.555556
