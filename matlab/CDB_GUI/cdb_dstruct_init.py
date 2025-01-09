@@ -108,7 +108,15 @@ struct_info_dict = {
                     ("b0", 38, "float"),
                     ("b0_inv", 40, "float"),
                     ("b0_k", 42, "float"),
-                   ),
+                    ),
+    "LMSanf_struct": (("W[0]", 0, "float"),
+                      ("W[1]", 2, "float"),
+                      ("W[2]", 4, "float"),
+                      ("W[3]", 6, "float"),
+                      ("W[4]", 8, "float"),
+                      ("W[5]", 10, "float"),
+                      ("mu", 12, "float"),
+                      ),
 }
 
 

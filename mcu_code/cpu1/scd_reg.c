@@ -86,6 +86,7 @@
 #include "comp.h"
 #include "oeca.h"
 #include "adrc.h"
+#include "lms_anf.h"
 
 #include "proj.h"
 
@@ -161,6 +162,16 @@ SCD_REG_ADD(targetOmegaM2, float)
 SCD_REG_ADD(targetUdc, float)
 SCD_REG_ADD(thetaEInc, float)
 SCD_REG_ADD(thetaEInc2, float)
+SCD_REG_ADD(CH1_angle_mode2, int16_t)
+SCD_REG_ADD(rdc_inj_all, float)
+SCD_REG_ADD(thetaEst, float)
+SCD_REG_ADD(thetaEst2, float)
+SCD_REG_ADD(LMSanfThetaM.W[0], float)
+SCD_REG_ADD(LMSanfThetaM.W[1], float)
+SCD_REG_ADD(LMSanfThetaM.W[2], float)
+SCD_REG_ADD(LMSanfThetaM.W[3], float)
+SCD_REG_ADD(LMSanfThetaM.W[4], float)
+SCD_REG_ADD(LMSanfThetaM.W[5], float)
 SCD_REG_ADD(thetaEnco_raw_offset, uint16_t)
 SCD_REG_ADD(thetaEnco_raw_offset2, uint16_t)
 SCD_REG_ADD(adcOffset_init, function)

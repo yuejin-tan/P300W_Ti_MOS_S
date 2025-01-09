@@ -2,3 +2,4 @@ slprj/
 *.mex*
 *.slxc
 build_*/
+__pycache__/

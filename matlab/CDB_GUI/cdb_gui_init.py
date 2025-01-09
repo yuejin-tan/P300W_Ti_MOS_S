@@ -154,6 +154,7 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
         self.pushButton_clearAll.clicked.connect(self.clrAllSlot)
         self.pushButton_draw.clicked.connect(self.drawSlot)
         self.pushButton_2workspace.clicked.connect(self.toWorkspaceSlot)
+        self.pushButton_fft.clicked.connect(self.fftSlot)
 
         self.lineEdit_sAddr.setText(startAddr_init)
         self.lineEdit_dSize.setText(dumpSize_init)
@@ -273,9 +274,10 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
         global valYnpTab
         global logTarCnt
         global IsrFreq
+        global sampInter
 
         self.updateIsrFreqUtil()
-        timex = np.arange(totalCycle)/IsrFreq
+        timex = np.arange(totalCycle)/IsrFreq*(sampInter+1)
 
         cbStr = ""
 
@@ -315,9 +317,10 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
         global valYnpTab
         global logTarCnt
         global IsrFreq
+        global sampInter
 
         self.updateIsrFreqUtil()
-        timex = np.arange(totalCycle)/IsrFreq
+        timex = np.arange(totalCycle)/IsrFreq*(sampInter+1)
         # 画图分析
         plt.figure(num=self.lineEdit_figTitle.text() +
                    datetime.datetime.now().strftime(' @ [%Y-%m-%d, %H:%M:%S]'))
@@ -328,11 +331,74 @@ class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):
 
         plt.xlabel("time:s")
         plt.ylabel("value")
-        plt.title(self.lineEdit_figTitle.text())
+        plt.grid()
         plt.legend()
+        plt.title(self.lineEdit_figTitle.text())
         plt.show()
 
         self.statusBar().showMessage("plot fin!", 1000)
+
+    def fftSlot(self):
+        global totalCycle
+        global valYnpTab
+        global logTarCnt
+        global IsrFreq
+        global sampInter
+        global fftUseHanningWin
+
+        self.updateIsrFreqUtil()
+        # fft画图分析
+        plt.figure(num=self.lineEdit_figTitle.text() +
+                   datetime.datetime.now().strftime(' @ [%Y-%m-%d, %H:%M:%S] (fft)'))
+
+        # 使用等幅值汉宁窗
+        if(fftUseHanningWin):
+            hanning_win_eq_amp = 1 - \
+                np.cos(2 * np.pi * np.arange(0, totalCycle, 1) / (totalCycle - 1))
+
+        As = [np.array(1)]*logTarCnt
+        # PHIs = [np.array(1)]*logTarCnt
+        freqs = np.fft.rfftfreq(totalCycle, 1.0/IsrFreq*(sampInter+1))
+        plotLists = []
+
+        for ii in range(logTarCnt):
+            if (w.drawCheckBoxList[ii].checkState()):
+                # fft
+                if(fftUseHanningWin):
+                    X = np.fft.rfft(valYnpTab[ii]*hanning_win_eq_amp)
+                else:
+                    X = np.fft.rfft(valYnpTab[ii])
+                # 幅值
+                As[ii] = np.abs(X)*(2.0/totalCycle)
+                As[ii][0] *= 0.5
+                # 相位,deg 功能不提供，似乎受频谱泄露影响太大
+                # PHIs[ii] = np.angle(X)*(180/np.pi)
+                # # 去除无用相位,只要最大的二十个，以免眼花
+                # AThd = np.sort(As[ii])[- 20]
+                # PHIs[ii] = np.where(As[ii] < AThd, 0, PHIs[ii])
+                # 记录序号
+                plotLists.append(ii)
+
+        # plt.subplot(2, 1, 1)
+        for ii in plotLists:
+            plt.plot(freqs, As[ii], "o", label=logTarNameList[ii])
+        plt.xlabel("freq:Hz")
+        plt.ylabel("amp")
+        plt.xlim(fftRange)
+        plt.grid()
+        plt.legend()
+        # plt.subplot(2, 1, 2)
+        # for ii in plotLists:
+        #     plt.plot(freqs, PHIs[ii], "o", label=logTarNameList[ii])
+        # plt.xlabel("freq:Hz")
+        # plt.ylabel("phase")
+        # plt.xlim(fftRange)
+        # plt.grid()
+        # plt.legend()
+        plt.title(self.lineEdit_figTitle.text()+" (fft)")
+        plt.show()
+
+        self.statusBar().showMessage("fft fin!", 1000)
 
     def trigCfgSlot(self):
         global trigSrcNameList

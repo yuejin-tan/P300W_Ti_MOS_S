@@ -101,6 +101,19 @@ extern struct LPF_Ord1_2_struct OECA_f1;
 extern struct encoder_struct encoder1;
 extern struct DRV8305_struct drv8305_1;
 
+// 位置谐波
+extern struct LMSanf_struct LMSanfThetaM;
+extern struct LPF_Ord1_2_struct CH1_IdFilt_2;
+extern struct LPF_Ord1_2_struct CH1_IqFilt_2;
+extern struct Trans_struct CH1_Ifilt2;
+
+extern int16_t CH1_angle_mode2;
+
+extern float rdc_inj_all;
+extern float Is2_f2;
+extern float thetaEst;
+extern float thetaEst2;
+
 // 采样值
 extern int16_t CH1_Udc_raw;
 extern int16_t CH1_Idc_raw;
@@ -217,6 +230,7 @@ extern float CH2_Iw_raw_offset;
 extern float CH2_Idc_raw_offset;
 
 extern int16_t CH1_angle_mode;
+extern int16_t CH1_angle_mode2;
 
 extern int16_t CH2_angle_mode;
 

@@ -21,6 +21,7 @@
 #include "deadBandComp.h"
 #include "oeca.h"
 #include "adrc.h"
+#include "lms_anf.h"
 
 #include "proj.h"
 #include "bsp_inline.h"
@@ -111,6 +112,27 @@ struct LPF_Ord1_2_struct OECA_f1;
 struct encoder_struct encoder1;
 struct encoder_struct encoder2;
 struct DRV8305_struct drv8305_1;
+
+// 位置谐波
+struct LMSanf_struct LMSanfThetaM;
+struct LPF_Ord1_2_struct CH1_IdFilt_2;
+struct LPF_Ord1_2_struct CH1_IqFilt_2;
+struct Trans_struct CH1_Ifilt2;
+
+int16_t CH1_angle_mode2 = 0;
+
+float rdc_inj_all = 0;
+
+float rdc_Acos_1 = -4.3545e-04;
+float rdc_Asin_1 = 0.0020;
+float rdc_Acos_2 = -0.0016;
+float rdc_Asin_2 = 1.0957e-04;
+float rdc_Acos_4 = -1.7133e-04;
+float rdc_Asin_4 = 3.3302e-05;
+
+float Is2_f2 = 0;
+float thetaEst = 0;
+float thetaEst2 = 0;
 
 enum ANGLE_MODE
 {
@@ -386,6 +408,7 @@ void adcOffset_init(int32_t avgNum)
 
     const int delay_tick_tmp = (float)(1e6 / 25.0) / vCTRL_FREQ;
 
+    // 提示编译器不要展开循环，因为这不是时间关键代码
 #pragma UNROLL ( 1 )
     for (int32_t i = 0;i < avgNum;i++)
     {
@@ -446,6 +469,11 @@ static void cfg_clk_util(uint16_t pwm_freq)
 
     PIctrl_Iloop_cfg(&CH2_IdPI, MATLAB_PARA_Iloop_bw_factor, DYNO_PARA_Ld, DYNO_PARA_Rall, MATLAB_PARA_Upi_max, -MATLAB_PARA_Upi_max);
     PIctrl_Iloop_cfg(&CH2_IqPI, MATLAB_PARA_Iloop_bw_factor, DYNO_PARA_Lq, DYNO_PARA_Rall, MATLAB_PARA_Upi_max, -MATLAB_PARA_Upi_max);
+
+    // 位置误差提取
+    LMSanfInit(&LMSanfThetaM);
+    LPF_Ord1_2_cfg(&CH1_IdFilt_2, LPF_KAHAN_2_t, vCTRL_TS, MATLAB_PARA_omega_filter_bw, 0);
+    LPF_Ord1_2_cfg(&CH1_IqFilt_2, LPF_KAHAN_2_t, vCTRL_TS, MATLAB_PARA_omega_filter_bw, 0);
 }
 
 void ctrl_init()
@@ -517,6 +545,21 @@ static inline void sigSampTask()
     thetaEnco_raw = encoder_u16Read(&encoder1, EQEP_TYJDEV_REGS1.QPOSCNT);
     spdEnco = encoder_lowSpdCalc(&encoder1, EQEP_TYJDEV_REGS1.QCPRDLAT);
 
+    // 角度处理
+    if (CH1_angle_mode2 & 0x1u)
+    {
+        // 是否人为注入谐波
+        rdc_inj_all = harmInjUtil(thetaEnco_raw, 1, rdc_Acos_1, rdc_Asin_1) +
+            harmInjUtil(thetaEnco_raw, 2, rdc_Acos_2, rdc_Asin_2) +
+            harmInjUtil(thetaEnco_raw, 4, rdc_Acos_4, rdc_Asin_4);
+        thetaEnco_raw += rdc_inj_all * (float)(65536.0 / M_PI / 2.0);
+    }
+    if (CH1_angle_mode2 & 0x2u)
+    {
+        // 是否补偿谐波
+        thetaEnco_raw -= thetaHarComp(&LMSanfThetaM, thetaEnco_raw);
+    }
+
     // ADC signals
     CH1_Iu_raw = bsp_get_CH1_Iu_adcRaw();
     CH1_Iv_raw = bsp_get_CH1_Iv_adcRaw();
@@ -585,6 +628,19 @@ static inline void sigSampTask()
     // 反变换得到滤波后的三相基波电流，此处不考虑零序
     // 使用电压的角度，以补偿控制造成的延后（有待证明？）
     trans2_dq2uvw(&CH1_Ifilt, &CH1_thetaU);
+
+    if (CH1_angle_mode2 & 0x4u)
+    {
+        CH1_Ifilt2.d = LPF_Ord2_update_kahan(&CH1_IdFilt_2, CH1_Ifbk.d);
+        CH1_Ifilt2.q = LPF_Ord2_update_kahan(&CH1_IqFilt_2, CH1_Ifbk.q);
+
+        Is2_f2 = CH1_Ifilt2.d * CH1_Ifilt2.d + CH1_Ifilt2.q * CH1_Ifilt2.q;
+        // 防止除零
+        Is2_f2 = fmaxf(Is2_f2, 1.0f);
+
+        thetaEst = (CH1_Ifbk.d * CH1_Ifilt2.q - CH1_Ifbk.q * CH1_Ifilt2.d) * (float)(1.0f / MATLAB_PARA_RDC2ELE_RATIO) / Is2_f2;
+        thetaEst2 = LMSanfUpdate(&LMSanfThetaM, thetaEnco_raw, thetaEst);
+    }
 }
 
 static inline void sigSampTask2()
