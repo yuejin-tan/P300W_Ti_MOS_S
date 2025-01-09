@@ -119,6 +119,7 @@ struct LPF_Ord1_2_struct CH1_IdFilt_2;
 struct LPF_Ord1_2_struct CH1_IqFilt_2;
 struct Trans_struct CH1_Ifilt2;
 
+// bit0 注入谐波 bit1 补偿谐波 bit2 谐波辨识
 int16_t CH1_angle_mode2 = 0;
 
 float rdc_inj_all = 0;
@@ -199,8 +200,10 @@ int16_t CH1_Iu_raw2 = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 int16_t CH1_Iv_raw2 = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 int16_t CH1_Iw_raw2 = (MATLAB_PARA_Isense_offset * MATLAB_PARA_adc_gain);
 
-// 1.0 / 4095.0 * 5.0 * 50.0 / 3.0 的标定值
-float CH1_IGain = 0.01917;
+// 1.0 / 4095.0 * 5.0 * 50.0 / 3 的标定值（3匝）
+// float CH1_IGain = 0.01917;
+// 1.0 / 4095.0 * 5.0 * 50.0 / 5 的标定值（5匝）
+float CH1_IGain = 0.0115;
 
 float CH1_IGain2 = -0.278f;
 
@@ -631,6 +634,7 @@ static inline void sigSampTask()
 
     if (CH1_angle_mode2 & 0x4u)
     {
+        // 误差辨识
         CH1_Ifilt2.d = LPF_Ord2_update_kahan(&CH1_IdFilt_2, CH1_Ifbk.d);
         CH1_Ifilt2.q = LPF_Ord2_update_kahan(&CH1_IqFilt_2, CH1_Ifbk.q);
 
@@ -847,6 +851,15 @@ static inline void protectIsrTask()
         speed_mode = SM_err;
         channel_mode = OM_stop;
     }
+
+    // 手动停机
+    if (bsp_GPIO_ifStopSigSet())
+    {
+        speed_mode = SM_stop;
+        channel_mode = OM_stop;
+        CH1_cur_mode = CM_stop;
+        IProtectFlg_CH1 |= 0x20u;
+    }
 }
 
 static inline void protectIsrTask2()
@@ -923,6 +936,15 @@ static inline void protectIsrTask2()
     {
         speed_mode2 = SM_err;
         channel_mode2 = OM_stop;
+    }
+
+    // 手动停机
+    if (bsp_GPIO_ifStopSigSet())
+    {
+        speed_mode2 = SM_stop;
+        channel_mode2 = OM_stop;
+        CH2_cur_mode = CM_stop;
+        IProtectFlg_CH2 |= 0x20u;
     }
 }
 

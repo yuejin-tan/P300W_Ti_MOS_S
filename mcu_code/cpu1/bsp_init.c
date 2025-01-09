@@ -907,6 +907,10 @@ static void init_board_gpio()
     GPIO_SetupPinOptions(24, GPIO_OUTPUT, GPIO_PUSHPULL);
     GPIO_WritePin(24, 0);
 
+    // 急停 gpio32
+    GPIO_SetupPinMux(32, GPIO_MUX_CPU1, 0);
+    GPIO_SetupPinOptions(32, GPIO_INPUT, GPIO_PULLUP | GPIO_QUAL6);
+
     // LEDS
     // LED D9 RED
     GPIO_SetupPinMux(34, GPIO_MUX_CPU1, 0);

@@ -34,7 +34,7 @@ matplotlib.use("Qt5Agg")
 
 # 初始化界面
 
-VERSION_STR = "CDB_GUI V0.3"
+VERSION_STR = "CDB_GUI V0.3.1"
 
 
 class mainWindow(QtWidgets.QMainWindow, mainWin_ui.Ui_MainWindow):

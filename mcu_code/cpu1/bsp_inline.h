@@ -63,6 +63,19 @@ static inline void bsp_POWER_EN_CH2(int level)
     }
 }
 
+// 外部急停信号
+static inline int bsp_GPIO_ifStopSigSet()
+{
+    if (GpioDataRegs.GPBDAT.bit.GPIO32)
+    {
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
+}
+
 // LED D9 RED
 static inline void bsp_LED_D9_RED_CTRL(int sta)
 {

@@ -766,7 +766,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>Negetive</string>
+                  <string>Negative</string>
                  </property>
                 </widget>
                </item>
@@ -857,7 +857,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>Negetive</string>
+                  <string>Negative</string>
                  </property>
                 </widget>
                </item>
