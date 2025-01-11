@@ -29,10 +29,10 @@
 #define MATLAB_PARA_tick_dead 200.000000
 #define MATLAB_PARA_tick_db_comp 200.000000
 #define MATLAB_PARA_db_Ithd 0.500000
-#define MATLAB_PARA_kp_wloop 0.011000
-#define MATLAB_PARA_ki_wloop 0.220000
-#define MATLAB_PARA_Wpi_max 2.000000
-#define MATLAB_PARA_Wpi_min -2.000000
+#define MATLAB_PARA_kp_wloop 0.013653
+#define MATLAB_PARA_ki_wloop 0.338916
+#define MATLAB_PARA_Wpi_max 1.200000
+#define MATLAB_PARA_Wpi_min -1.200000
 #define MATLAB_PARA_kp_vloop 458.333333
 #define MATLAB_PARA_ki_vloop 38194.444444
 #define MATLAB_PARA_Wdcpi_max 4.000000
@@ -46,7 +46,7 @@
 #define MATLAB_PARA_outer_filter_bw 1000.000000
 #define MATLAB_PARA_outer_filter_yita 0.900000
 #define MATLAB_PARA_Iloop_bw_est_factor 0.026526
-#define MATLAB_PARA_omega_filter_bw 20.000000
+#define MATLAB_PARA_omega_filter_bw 79.577472
 #define MATLAB_PARA_ADRC_gamma 0.001000
 #define MATLAB_PARA_ADRC_c_u1 20.000000
 #define MATLAB_PARA_ADRC_c_u2 200.000000

@@ -122,7 +122,14 @@ struct Trans_struct CH1_Ifilt2;
 // bit0 注入谐波 bit1 补偿谐波 bit2 谐波辨识
 int16_t CH1_angle_mode2 = 0;
 
+int16_t rdc_inj_raw = 0;
+int16_t rdc_comp_raw = 0;
+
 float rdc_inj_all = 0;
+float rdc_comp_all = 0;
+float thetaEst = 0;
+float thetaEst2 = 0;
+float Is2_f2 = 0;
 
 float rdc_Acos_1 = -4.3545e-04;
 float rdc_Asin_1 = 0.0020;
@@ -130,10 +137,6 @@ float rdc_Acos_2 = -0.0016;
 float rdc_Asin_2 = 1.0957e-04;
 float rdc_Acos_4 = -1.7133e-04;
 float rdc_Asin_4 = 3.3302e-05;
-
-float Is2_f2 = 0;
-float thetaEst = 0;
-float thetaEst2 = 0;
 
 enum ANGLE_MODE
 {
@@ -332,7 +335,7 @@ float db_cmp_tick = MATLAB_PARA_tick_db_comp;
 float db_cmp_vds = MATLAB_PARA_Vdf + MATLAB_PARA_Vsat;
 
 int16_t CH2_ext_fcn = 0;
-float db2_Ithd_1 = 10;
+float db2_Ithd_1 = 5;
 // 注意，由于ch2是强行兼容的，故死区补偿的参数需*2
 float db2_cmp_tick = 200;
 float db2_cmp_vds = 0.05f + 0.05f;
@@ -467,16 +470,16 @@ static void cfg_clk_util(uint16_t pwm_freq)
     LPF_Ord1_2_cfg(&CH2_UdcFilt, LPF_ORD_2_t, vCTRL_TS, MATLAB_PARA_outer_filter_bw, MATLAB_PARA_outer_filter_yita);
     LPF_Ord1_2_cfg(&CH2_IdcFilt, LPF_ORD_2_t, vCTRL_TS, MATLAB_PARA_outer_filter_bw, MATLAB_PARA_outer_filter_yita);
 
-    LPF_Ord1_2_cfg(&PdcFilt, LPF_ORD_2_t, vCTRL_TS, MATLAB_PARA_outer_filter_bw, MATLAB_PARA_outer_filter_yita);
-    LPF_Ord1_2_cfg(&omegaFilt, LPF_KAHAN_2_t, vCTRL_TS, MATLAB_PARA_omega_filter_bw, NULL);
+    LPF_Ord1_2_cfg(&PdcFilt2, LPF_ORD_2_t, vCTRL_TS, MATLAB_PARA_outer_filter_bw, MATLAB_PARA_outer_filter_yita);
+    LPF_Ord1_2_cfg(&omegaFilt2, LPF_KAHAN_2_t, vCTRL_TS, MATLAB_PARA_omega_filter_bw, NULL);
 
     PIctrl_Iloop_cfg(&CH2_IdPI, MATLAB_PARA_Iloop_bw_factor, DYNO_PARA_Ld, DYNO_PARA_Rall, MATLAB_PARA_Upi_max, -MATLAB_PARA_Upi_max);
     PIctrl_Iloop_cfg(&CH2_IqPI, MATLAB_PARA_Iloop_bw_factor, DYNO_PARA_Lq, DYNO_PARA_Rall, MATLAB_PARA_Upi_max, -MATLAB_PARA_Upi_max);
 
     // 位置误差提取
     LMSanfInit(&LMSanfThetaM);
-    LPF_Ord1_2_cfg(&CH1_IdFilt_2, LPF_KAHAN_2_t, vCTRL_TS, MATLAB_PARA_omega_filter_bw, 0);
-    LPF_Ord1_2_cfg(&CH1_IqFilt_2, LPF_KAHAN_2_t, vCTRL_TS, MATLAB_PARA_omega_filter_bw, 0);
+    LPF_Ord1_2_cfg(&CH1_IdFilt_2, LPF_KAHAN_2_t, vCTRL_TS, 5.0, 0);
+    LPF_Ord1_2_cfg(&CH1_IqFilt_2, LPF_KAHAN_2_t, vCTRL_TS, 5.0, 0);
 }
 
 void ctrl_init()
@@ -510,7 +513,7 @@ void ctrl_init()
 
     speedCal_init(&omegaEcal, &omegaFilt, 0);
 
-    speedCal_init(&omegaEcal2, &omegaFilt, 0);
+    speedCal_init(&omegaEcal2, &omegaFilt2, 0);
 
     protect_init(&curProtect_CH1, CUR_PRCT_THD_L, CUR_PRCT_THD_H, CUR_PRCT_INTG_BASE, CUR_PRCT_INTG_MAX, CUR_PRCT_FOLW_DMAX, CUR_PRCT_FOLW_INTG_MAX);
     protect_init(&UdcProtect_CH1, UDC_PRCT_THD_L, UDC_PRCT_THD_H, UDC_PRCT_INTG_BASE, UDC_PRCT_INTG_MAX, UDC_PRCT_FOLW_DMAX, UDC_PRCT_FOLW_INTG_MAX);
@@ -552,15 +555,20 @@ static inline void sigSampTask()
     if (CH1_angle_mode2 & 0x1u)
     {
         // 是否人为注入谐波
-        rdc_inj_all = harmInjUtil(thetaEnco_raw, 1, rdc_Acos_1, rdc_Asin_1) +
-            harmInjUtil(thetaEnco_raw, 2, rdc_Acos_2, rdc_Asin_2) +
-            harmInjUtil(thetaEnco_raw, 4, rdc_Acos_4, rdc_Asin_4);
-        thetaEnco_raw += rdc_inj_all * (float)(65536.0 / M_PI / 2.0);
+        rdc_inj_all = harmCalcUtil(thetaEnco_raw, 1, rdc_Acos_1, rdc_Asin_1) +
+            harmCalcUtil(thetaEnco_raw, 2, rdc_Acos_2, rdc_Asin_2) +
+            harmCalcUtil(thetaEnco_raw, 4, rdc_Acos_4, rdc_Asin_4);
+        rdc_inj_raw = rdc_inj_all * (float)(65536.0 / M_PI / 2.0);
+        thetaEnco_raw += rdc_inj_raw;
     }
     if (CH1_angle_mode2 & 0x2u)
     {
         // 是否补偿谐波
-        thetaEnco_raw -= thetaHarComp(&LMSanfThetaM, thetaEnco_raw);
+        rdc_comp_all = harmCalcUtil(thetaEnco_raw, 1, LMSanfThetaM.W[0], LMSanfThetaM.W[1]) +
+            harmCalcUtil(thetaEnco_raw, 2, LMSanfThetaM.W[2], LMSanfThetaM.W[3]) +
+            harmCalcUtil(thetaEnco_raw, 4, LMSanfThetaM.W[4], LMSanfThetaM.W[5]);
+        rdc_comp_raw = rdc_comp_all * (float)(65536.0 / M_PI / 2.0);
+        thetaEnco_raw -= rdc_comp_raw;
     }
 
     // ADC signals
@@ -676,7 +684,7 @@ static inline void sigSampTask2()
     CH2_Udc_SI = getBusVoltSI(CH2_Udc_raw);
     CH2_Udc = LPF_Ord2_update(&CH2_UdcFilt, CH2_Udc_SI);
 
-    // Pdc2 = LPF_Ord2_update(&PdcFilt, CH2_Udc * CH2_Idc);
+    // Pdc2 = LPF_Ord2_update(&PdcFilt2, CH2_Udc * CH2_Idc);
 
     // calculate omega 可以用上次的角度值，区别不大
     omegaMfbk2 = speedCal_update(&omegaEcal2, getThetaEUint(thetaEnco_raw2)) * (float)(1.0 / MATLAB_PARA_RDC2ELE_RATIO);

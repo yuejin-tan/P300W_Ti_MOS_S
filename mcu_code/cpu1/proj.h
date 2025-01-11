@@ -109,10 +109,21 @@ extern struct Trans_struct CH1_Ifilt2;
 
 extern int16_t CH1_angle_mode2;
 
+extern int16_t rdc_inj_raw;
+extern int16_t rdc_comp_raw;
+
 extern float rdc_inj_all;
-extern float Is2_f2;
+extern float rdc_comp_all;
 extern float thetaEst;
 extern float thetaEst2;
+extern float Is2_f2;
+
+extern float rdc_Acos_1;
+extern float rdc_Asin_1;
+extern float rdc_Acos_2;
+extern float rdc_Asin_2;
+extern float rdc_Acos_4;
+extern float rdc_Asin_4;
 
 // 采样值
 extern int16_t CH1_Udc_raw;
