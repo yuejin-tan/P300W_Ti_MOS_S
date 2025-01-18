@@ -24,6 +24,7 @@ struct DRV8305_struct
 
 // 配置参数
 
+#pragma FUNC_ALWAYS_INLINE(drv8305_init)
 static inline void drv8305_init(struct DRV8305_struct* hDRV8305)
 {
     // 确定SPI号
@@ -109,6 +110,7 @@ static inline void drv8305_init(struct DRV8305_struct* hDRV8305)
     return;
 }
 
+#pragma FUNC_ALWAYS_INLINE(drv8305_idleErrCheck)
 static inline void drv8305_idleErrCheck(struct DRV8305_struct* hDRV8305)
 {
     const uint16_t DRV8305RegReadTars[] = {

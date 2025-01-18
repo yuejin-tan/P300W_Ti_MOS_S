@@ -13,11 +13,13 @@
 
  // timer 0
 
+#pragma FUNC_ALWAYS_INLINE(bsp_tim0_polling_OF)
 static inline int16_t bsp_tim0_polling_OF(void)
 {
     return CpuTimer0Regs.TCR.bit.TIF;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_tim0_clearFlg_OF)
 static inline void bsp_tim0_clearFlg_OF(void)
 {
     CpuTimer0Regs.TCR.bit.TIF = 1;
@@ -25,17 +27,20 @@ static inline void bsp_tim0_clearFlg_OF(void)
 
 // timer 1
 
+#pragma FUNC_ALWAYS_INLINE(bsp_tim1_polling_OF)
 static inline int16_t bsp_tim1_polling_OF(void)
 {
     return CpuTimer1Regs.TCR.bit.TIF;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_tim1_clearFlg_OF)
 static inline void bsp_tim1_clearFlg_OF(void)
 {
     CpuTimer1Regs.TCR.bit.TIF = 1;
 }
 
 // LED D10 BLUE
+#pragma FUNC_ALWAYS_INLINE(bsp_LED_D10_BLUE_CTRL)
 static inline void bsp_LED_D10_BLUE_CTRL(int sta)
 {
     if (sta == 1)

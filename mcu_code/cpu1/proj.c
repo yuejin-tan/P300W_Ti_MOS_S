@@ -340,6 +340,9 @@ float db2_Ithd_1 = 5;
 float db2_cmp_tick = 200;
 float db2_cmp_vds = 0.05f + 0.05f;
 
+int16_t CH1_cur_sta = 0;
+int16_t CH2_cur_sta = 0;
+
 int16_t speed_mode = 0;
 int16_t torque_mode = 0;
 int16_t channel_mode = 0;
@@ -535,16 +538,19 @@ void ctrl_init()
 }
 
 // 两个功率部分参数不一，懒得修改matlab脚本了
+#pragma FUNC_ALWAYS_INLINE(getCurSI_)
 static inline float getCurSI_(int16_t adcVal, float offset)
 {
     return (adcVal - offset) * CH1_IGain;
 }
 
+#pragma FUNC_ALWAYS_INLINE(getCurSI_2)
 static inline float getCurSI_2(int16_t adcVal, float offset)
 {
     return (adcVal - offset) * CH1_IGain2;
 }
 
+#pragma FUNC_ALWAYS_INLINE(sigSampTask)
 static inline void sigSampTask()
 {
     // 摆烂没有使用DMA或CLA来读取 eqep, 故需尽早访问寄存器, 以保持延迟一致性
@@ -655,6 +661,7 @@ static inline void sigSampTask()
     }
 }
 
+#pragma FUNC_ALWAYS_INLINE(sigSampTask2)
 static inline void sigSampTask2()
 {
     // 摆烂没有使用DMA或CLA来读取 eqep, 故需尽早访问寄存器, 以保持延迟一致性
@@ -775,6 +782,7 @@ static inline void sigSampTask2()
     trans2_dq2uvw(&CH2_Ifilt, &CH2_thetaU);
 }
 
+#pragma FUNC_ALWAYS_INLINE(protectIsrTask)
 static inline void protectIsrTask()
 {
     // 任何时候进行电流绝对值保护和有效值保护
@@ -870,6 +878,7 @@ static inline void protectIsrTask()
     }
 }
 
+#pragma FUNC_ALWAYS_INLINE(protectIsrTask2)
 static inline void protectIsrTask2()
 {
     // 任何时候进行电流绝对值保护和有效值保护
@@ -956,6 +965,7 @@ static inline void protectIsrTask2()
     }
 }
 
+#pragma FUNC_ALWAYS_INLINE(curLoopTask)
 static inline void curLoopTask()
 {
     switch (CH1_cur_mode)
@@ -996,7 +1006,7 @@ static inline void curLoopTask()
             PIctrl_svpwmBoundSet(&CH1_IqPI, Usv_max);
         }
         trans2_dq2albe(&CH1_Utar, &CH1_thetaU);
-        SVPWM_dutyCal(&CH1_svpwm, CH1_Utar.al, CH1_Utar.be);
+        CH1_cur_sta = SVPWM_dutyCal(&CH1_svpwm, CH1_Utar.al, CH1_Utar.be);
         if (CH1_ext_fcn & 0x4u)
         {
             // 死区补偿 part2
@@ -1041,6 +1051,7 @@ static inline void curLoopTask()
     }
 }
 
+#pragma FUNC_ALWAYS_INLINE(curLoopTask2)
 static inline void curLoopTask2()
 {
     switch (CH2_cur_mode)
@@ -1081,7 +1092,7 @@ static inline void curLoopTask2()
             PIctrl_svpwmBoundSet(&CH2_IqPI, Usv_max2);
         }
         trans2_dq2albe(&CH2_Utar, &CH2_thetaU);
-        SVPWM_dutyCal(&CH2_svpwm, CH2_Utar.al, CH2_Utar.be);
+        CH2_cur_sta = SVPWM_dutyCal(&CH2_svpwm, CH2_Utar.al, CH2_Utar.be);
         if (CH2_ext_fcn & 0x4u)
         {
             // 死区补偿 part2
@@ -1117,6 +1128,7 @@ static inline void curLoopTask2()
     }
 }
 
+#pragma FUNC_ALWAYS_INLINE(outerLoopTask)
 static inline void outerLoopTask()
 {
     // 目标给定
@@ -1360,6 +1372,7 @@ static inline void outerLoopTask()
     }
 }
 
+#pragma FUNC_ALWAYS_INLINE(outerLoopTask2)
 static inline void outerLoopTask2()
 {
     // 目标给定
@@ -1498,6 +1511,7 @@ void mainIsrProcess2()
     return;
 }
 
+#pragma FUNC_ALWAYS_INLINE(protectMainLoopTask)
 static inline void protectMainLoopTask()
 {
     const float tempLpfCoeff = 0.1;

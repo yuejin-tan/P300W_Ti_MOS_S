@@ -265,6 +265,9 @@ extern float db2_Ithd_1;
 extern float db2_cmp_tick;
 extern float db2_cmp_vds;
 
+extern int16_t CH1_cur_sta;
+extern int16_t CH2_cur_sta;
+
 extern int16_t speed_mode;
 extern int16_t torque_mode;
 extern int16_t channel_mode;

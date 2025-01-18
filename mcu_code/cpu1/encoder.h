@@ -23,6 +23,7 @@ struct encoder_struct {
     float spdCalc_ratio;
 };
 
+#pragma FUNC_ALWAYS_INLINE(encoder_init)
 static inline void encoder_init(struct encoder_struct* hEncoder, uint32_t ppr)
 {
     hEncoder->raw2u16_ratio = 65536.0f / (ppr * 4);
@@ -31,11 +32,13 @@ static inline void encoder_init(struct encoder_struct* hEncoder, uint32_t ppr)
     hEncoder->spdCalc_ratio = (float)(200e6 * 2.0 * M_PI) / ppr;
 }
 
+#pragma FUNC_ALWAYS_INLINE(encoder_u16Read)
 static inline uint16_t encoder_u16Read(struct encoder_struct* hEncoder, uint32_t qposcnt)
 {
     return qposcnt * hEncoder->raw2u16_ratio;
 }
 
+#pragma FUNC_ALWAYS_INLINE(encoder_lowSpdCalc)
 static inline float encoder_lowSpdCalc(struct encoder_struct* hEncoder, uint16_t qcprdlat)
 {
     if (qcprdlat == 0)

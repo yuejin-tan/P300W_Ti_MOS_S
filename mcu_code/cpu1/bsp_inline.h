@@ -12,6 +12,7 @@
 #include "stdint.h"
 
  // HW Fault
+#pragma FUNC_ALWAYS_INLINE(bsp_GPIO_ifHWFaultSigSet)
 static inline int bsp_GPIO_ifHWFaultSigSet()
 {
     if (GpioDataRegs.GPADAT.bit.GPIO19)
@@ -24,6 +25,7 @@ static inline int bsp_GPIO_ifHWFaultSigSet()
     }
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_GPIO_ifHWFaultSigSet2)
 static inline int bsp_GPIO_ifHWFaultSigSet2()
 {
     if (GpioDataRegs.GPEDAT.bit.GPIO139)
@@ -37,6 +39,7 @@ static inline int bsp_GPIO_ifHWFaultSigSet2()
 }
 
 // POWER EN
+#pragma FUNC_ALWAYS_INLINE(bsp_POWER_EN_CH1)
 static inline void bsp_POWER_EN_CH1(int level)
 {
     // 低使能
@@ -50,6 +53,7 @@ static inline void bsp_POWER_EN_CH1(int level)
     }
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_POWER_EN_CH2)
 static inline void bsp_POWER_EN_CH2(int level)
 {
     // 高使能
@@ -64,6 +68,7 @@ static inline void bsp_POWER_EN_CH2(int level)
 }
 
 // 外部急停信号
+#pragma FUNC_ALWAYS_INLINE(bsp_GPIO_ifStopSigSet)
 static inline int bsp_GPIO_ifStopSigSet()
 {
     if (GpioDataRegs.GPBDAT.bit.GPIO32)
@@ -77,6 +82,7 @@ static inline int bsp_GPIO_ifStopSigSet()
 }
 
 // LED D9 RED
+#pragma FUNC_ALWAYS_INLINE(bsp_LED_D9_RED_CTRL)
 static inline void bsp_LED_D9_RED_CTRL(int sta)
 {
     if (sta == 1)
@@ -98,11 +104,13 @@ static inline void bsp_LED_D9_RED_CTRL(int sta)
 #include "SVPWM.h"
 
 // group1
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch1_is_up_cnt)
 static inline int16_t bsp_epwm_ch1_is_up_cnt()
 {
     return EPwm1Regs.TBSTS.bit.CTRDIR;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch1_reg_set)
 static inline void bsp_epwm_ch1_reg_set(struct SVPWM_struct* hSVPWM)
 {
     EPwm1Regs.CMPA.bit.CMPA = __min(__max(hSVPWM->epwmU, 0), vPWM_LOAD_VAL_I);
@@ -110,6 +118,7 @@ static inline void bsp_epwm_ch1_reg_set(struct SVPWM_struct* hSVPWM)
     EPwm3Regs.CMPA.bit.CMPA = __min(__max(hSVPWM->epwmW, 0), vPWM_LOAD_VAL_I);
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch1_reg_init)
 static inline void bsp_epwm_ch1_reg_init()
 {
     EPwm1Regs.CMPA.bit.CMPA = vPWM_CMP_DEFAILT_VAL_I;
@@ -120,6 +129,7 @@ static inline void bsp_epwm_ch1_reg_init()
 #define TYJ_AQSFRC_LOW 0b01
 #define TYJ_AQSFRC_HIGH 0b10
 
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch1_on)
 static inline void bsp_epwm_ch1_on()
 {
     // 开启 IGBT
@@ -133,6 +143,7 @@ static inline void bsp_epwm_ch1_on()
     EPwm3Regs.AQCSFRC.bit.CSFB = 0;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch1_off)
 static inline void bsp_epwm_ch1_off()
 {
     // 关闭 IGBT
@@ -146,6 +157,7 @@ static inline void bsp_epwm_ch1_off()
     EPwm3Regs.AQCSFRC.bit.CSFB = TYJ_AQSFRC_HIGH;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch1_LSSC)
 static inline void bsp_epwm_ch1_LSSC()
 {
     // 开启 下桥 IGBT
@@ -160,6 +172,7 @@ static inline void bsp_epwm_ch1_LSSC()
 }
 
 // mode : 0@DOWN 1@UP; bit0 A, bit1 B, bit2 C
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch1_LSSC2)
 static inline void bsp_epwm_ch1_LSSC2(int16_t mode)
 {
     if (mode & 0x1)
@@ -198,11 +211,13 @@ static inline void bsp_epwm_ch1_LSSC2(int16_t mode)
 
 
 // group2
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch2_is_up_cnt)
 static inline int16_t bsp_epwm_ch2_is_up_cnt()
 {
     return EPwm4Regs.TBSTS.bit.CTRDIR;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch2_reg_set)
 static inline void bsp_epwm_ch2_reg_set(struct SVPWM_struct* hSVPWM)
 {
     // 由于控制频率翻倍，但单采单更，故可以从原始的结果上改
@@ -229,6 +244,7 @@ static inline void bsp_epwm_ch2_reg_set(struct SVPWM_struct* hSVPWM)
     }
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch2_reg_init)
 static inline void bsp_epwm_ch2_reg_init()
 {
     // 由于控制频率翻倍但单采单更，故可以从ch1的结果上改
@@ -241,6 +257,7 @@ static inline void bsp_epwm_ch2_reg_init()
     EPwm6Regs.CMPB.bit.CMPB = new_cmp_val;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch2_on)
 static inline void bsp_epwm_ch2_on()
 {
     // 开启 IGBT
@@ -254,6 +271,7 @@ static inline void bsp_epwm_ch2_on()
     EPwm6Regs.AQCSFRC.bit.CSFB = 0;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch2_off)
 static inline void bsp_epwm_ch2_off()
 {
     // 关闭 IGBT
@@ -267,6 +285,7 @@ static inline void bsp_epwm_ch2_off()
     EPwm6Regs.AQCSFRC.bit.CSFB = TYJ_AQSFRC_HIGH;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch2_LSSC)
 static inline void bsp_epwm_ch2_LSSC()
 {
     // 开启 下桥 IGBT
@@ -281,6 +300,7 @@ static inline void bsp_epwm_ch2_LSSC()
 }
 
 // mode : 0@DOWN 1@UP; bit0 A, bit1 B, bit2 C
+#pragma FUNC_ALWAYS_INLINE(bsp_epwm_ch2_LSSC2)
 static inline void bsp_epwm_ch2_LSSC2(int16_t mode)
 {
     if (mode & 0x1)
@@ -319,26 +339,31 @@ static inline void bsp_epwm_ch2_LSSC2(int16_t mode)
 
 // adc A
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH2_Iw_adcRaw)
 static inline int16_t bsp_get_CH2_Iw_adcRaw(void)
 {
     return AdcaResultRegs.ADCRESULT0;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH2_Va_adcRaw)
 static inline int16_t bsp_get_CH2_Va_adcRaw(void)
 {
     return AdcaResultRegs.ADCRESULT1;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH2_Udc_adcRaw)
 static inline int16_t bsp_get_CH2_Udc_adcRaw(void)
 {
     return AdcaResultRegs.ADCRESULT2;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH1_Iu_adcRaw)
 static inline int16_t bsp_get_CH1_Iu_adcRaw(void)
 {
     return AdcaResultRegs.ADCRESULT3;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH1_Iu2_adcRaw)
 static inline int16_t bsp_get_CH1_Iu2_adcRaw(void)
 {
     return AdcaResultRegs.ADCRESULT4;
@@ -346,26 +371,31 @@ static inline int16_t bsp_get_CH1_Iu2_adcRaw(void)
 
 // adc B
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH2_Iv_adcRaw)
 static inline int16_t bsp_get_CH2_Iv_adcRaw(void)
 {
     return AdcbResultRegs.ADCRESULT0;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH2_Vc_adcRaw)
 static inline int16_t bsp_get_CH2_Vc_adcRaw(void)
 {
     return AdcbResultRegs.ADCRESULT1;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH1_Iv_adcRaw)
 static inline int16_t bsp_get_CH1_Iv_adcRaw(void)
 {
     return AdcbResultRegs.ADCRESULT2;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH1_Iv2_adcRaw)
 static inline int16_t bsp_get_CH1_Iv2_adcRaw(void)
 {
     return AdcbResultRegs.ADCRESULT3;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH1_Udc_adcRaw)
 static inline int16_t bsp_get_CH1_Udc_adcRaw(void)
 {
     return AdcbResultRegs.ADCRESULT4;
@@ -373,21 +403,25 @@ static inline int16_t bsp_get_CH1_Udc_adcRaw(void)
 
 // adc C
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH2_Iu_adcRaw)
 static inline int16_t bsp_get_CH2_Iu_adcRaw(void)
 {
     return AdccResultRegs.ADCRESULT0;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH2_Vb_adcRaw)
 static inline int16_t bsp_get_CH2_Vb_adcRaw(void)
 {
     return AdccResultRegs.ADCRESULT1;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH1_Iw_adcRaw)
 static inline int16_t bsp_get_CH1_Iw_adcRaw(void)
 {
     return AdccResultRegs.ADCRESULT2;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_CH1_Iw2_adcRaw)
 static inline int16_t bsp_get_CH1_Iw2_adcRaw(void)
 {
     return AdccResultRegs.ADCRESULT3;
@@ -395,22 +429,26 @@ static inline int16_t bsp_get_CH1_Iw2_adcRaw(void)
 
 // adc D
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_diff1_adcRaw)
 static inline uint16_t bsp_get_diff1_adcRaw(void)
 {
     return AdcdResultRegs.ADCRESULT0;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_ntc1_adcRaw)
 static inline uint16_t bsp_get_ntc1_adcRaw(void)
 {
     return AdcdResultRegs.ADCRESULT1;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_get_ntcRef1_adcRaw)
 static inline uint16_t bsp_get_ntcRef1_adcRaw(void)
 {
     return AdcdResultRegs.ADCRESULT2;
 }
 
 // adc sw trig
+#pragma FUNC_ALWAYS_INLINE(bsp_adc_swTrig_ntc)
 static inline void bsp_adc_swTrig_ntc(void)
 {
     AdcdRegs.ADCSOCFRC1.all = 0b110u;
@@ -418,11 +456,13 @@ static inline void bsp_adc_swTrig_ntc(void)
 
 // timer 0
 
+#pragma FUNC_ALWAYS_INLINE(bsp_tim0_polling_OF)
 static inline int16_t bsp_tim0_polling_OF(void)
 {
     return CpuTimer0Regs.TCR.bit.TIF;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_tim0_clearFlg_OF)
 static inline void bsp_tim0_clearFlg_OF(void)
 {
     CpuTimer0Regs.TCR.bit.TIF = 1;
@@ -430,11 +470,13 @@ static inline void bsp_tim0_clearFlg_OF(void)
 
 // timer 1
 
+#pragma FUNC_ALWAYS_INLINE(bsp_tim1_polling_OF)
 static inline int16_t bsp_tim1_polling_OF(void)
 {
     return CpuTimer1Regs.TCR.bit.TIF;
 }
 
+#pragma FUNC_ALWAYS_INLINE(bsp_tim1_clearFlg_OF)
 static inline void bsp_tim1_clearFlg_OF(void)
 {
     CpuTimer1Regs.TCR.bit.TIF = 1;
